@@ -1,0 +1,1 @@
+cd jobstracker-api && go run main.go

@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: gemsaauser
+      POSTGRES_PASSWORD: gemsaapass
+      POSTGRES_DB: gemsaadb
+      TZ: "Asia/Bangkok" # Set timezone to Thailand
+    ports:
+      - "5432:5432"
+    volumes:
+      - D:\Programer_eieiza\ProjectWork\PERSONAL_PROJECT\WEBAPPJOBTRACKER\storage\postgresql:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gemsaauser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    environment:
+      TZ: "Asia/Bangkok" # Set timezone to Thailand
+    ports:
+      - "6379:6379"
+    volumes:
+      - D:\Programer_eieiza\ProjectWork\PERSONAL_PROJECT\WEBAPPJOBTRACKER\storage\redis:/data
+
+  goapp:
+    image: go-api-jobtrackker:latest # Use the existing image if available
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: goapp
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      POSTGRESQL_CONNECTION_STRING: postgres://gemsaauser:gemsaapass@postgres:5432/gemsaadb?sslmode=disable
+      JOBS_WORKER_TRIGGER_TIME: 30
+      TZ: "Asia/Bangkok" # Set timezone to Thailand
+
+volumes:
+  postgres_data:
+  redis_data:

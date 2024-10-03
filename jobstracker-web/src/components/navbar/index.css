@@ -1,0 +1,45 @@
+/* Add these styles to your CSS file or a <style> tag */
+.slide-enter {
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: opacity 0.5s ease-in, transform 0.5s ease-in;
+}
+
+.slide-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.slide-exit {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.slide-exit-active {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+/* Add these styles to your CSS file or a <style> tag */
+.profile-menu-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.profile-menu-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.profile-menu-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.profile-menu-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 300ms, transform 300ms;
+}
