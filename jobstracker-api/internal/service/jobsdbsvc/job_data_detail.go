@@ -8,11 +8,13 @@ import (
 	"jobtrackker/internal/repo"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type IJobHistoryDetailssvc interface {
 	// TickerRunsJobs()
 	ScrapeToJobsDataDetails() error
+	InsertOrUpdateJobsSuperDetail(detailsData map[string]map[string]interface{}) error
 }
 
 func NewJobHistoryDetailssvc() IJobHistoryDetailssvc {
@@ -134,6 +136,31 @@ func (w jobHistoryDetailssvc) ScrapeToJobsDataDetails() error {
 	j := repo.NewJobsdbDetail()
 	fmt.Println("Inserting to DB", len(jobsDetailsToDB))
 	err = j.InsertOrUpdateJobs(jobsDetailsToDB)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r jobHistoryDetailssvc) InsertOrUpdateJobsSuperDetail(detailsData map[string]map[string]interface{}) error {
+	var ListUpdate []data.JobsDatadetailsData
+
+	for id, value := range detailsData {
+		fmt.Println("ID IS : ", id)
+		fmt.Println("VALUE IS : ", value)
+		fmt.Println("--------------------------------------------------------------------------")
+		id, err := strconv.Atoi(id)
+		if err != nil {
+			return err
+		}
+		dataToappend := data.JobsDatadetailsData{
+			Id:          id,
+			SuperDetail: value,
+		}
+		ListUpdate = append(ListUpdate, dataToappend)
+	}
+	j := repo.NewJobsdbDetail()
+	err := j.InsertOrUpdateJobsSuperDetail(ListUpdate)
 	if err != nil {
 		return err
 	}

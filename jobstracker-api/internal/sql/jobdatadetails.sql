@@ -13,6 +13,7 @@ CREATE TABLE public.jobsdatadetails (
     teaser TEXT NOT NULL,
     work_type TEXT NOT NULL,
     latest_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    superdetail JSONB,
 );
 
 INSERT INTO public.jobsdatadetails (

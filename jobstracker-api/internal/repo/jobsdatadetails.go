@@ -11,6 +11,7 @@ import (
 type JobsdbDetail interface {
 	CreateTable() error
 	InsertOrUpdateJobs(jobs []data.JobsDatadetailsData) error
+	InsertOrUpdateJobsSuperDetail(jobs []data.JobsDatadetailsData) error
 	// GetListSchedule()
 }
 
@@ -84,6 +85,37 @@ func (r jobsdbDetail) InsertOrUpdateJobs(jobs []data.JobsDatadetailsData) error 
             work_type = EXCLUDED.work_type,
             latest_update = CURRENT_TIMESTAMP;
     `
+	db := postgresqldb.NewRepo().DB()
+	if db == nil {
+		log.Println("db is nil")
+		return errors.New("error init db")
+	}
+
+	_, err := db.Exec(query, values...)
+	return err
+}
+
+func (r jobsdbDetail) InsertOrUpdateJobsSuperDetail(jobs []data.JobsDatadetailsData) error {
+	query := `
+		INSERT INTO public.jobsdatadetails (
+			id, super_detail
+		) VALUES
+	`
+
+	values := []interface{}{}
+	for i, job := range jobs {
+		query += fmt.Sprintf("($%d, $%d),",
+			i*2+1, i*2+2)
+		values = append(values, job.Id, job.SuperDetail)
+	}
+
+	query = query[:len(query)-1] // Remove the trailing comma
+
+	query += `
+		ON CONFLICT (id) DO UPDATE SET
+			super_detail = EXCLUDED.super_detail,
+			latest_update = CURRENT_TIMESTAMP;
+	`
 	db := postgresqldb.NewRepo().DB()
 	if db == nil {
 		log.Println("db is nil")

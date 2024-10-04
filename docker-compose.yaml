@@ -5,16 +5,16 @@ services:
     image: postgres:16
     container_name: postgres
     environment:
-      POSTGRES_USER: gemsaauser
-      POSTGRES_PASSWORD: gemsaapass
-      POSTGRES_DB: gemsaadb
+      POSTGRES_USER: exampleuser
+      POSTGRES_PASSWORD: examplepassword
+      POSTGRES_DB: jobtrackkerdb
       TZ: "Asia/Bangkok" # Set timezone to Thailand
     ports:
       - "5432:5432"
     volumes:
-      - D:/Programer_eieiza/ProjectWork/PERSONAL_PROJECT/WEBAPPJOBTRACKER/storage/postgresql:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U gemsaauser"]
+      test: ["CMD-SHELL", "pg_isready -U exampleuser"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -27,12 +27,12 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - D:/Programer_eieiza/ProjectWork/PERSONAL_PROJECT/WEBAPPJOBTRACKER/storage/redis:/data
+      - redis_data:/data
 
   jobtracker-api:
     image: go-api-jobtrackker:latest # Use the existing image if available
     build:
-      context: ../jobstracker-api/.
+      context: ./jobstracker-api
       dockerfile: Dockerfile
     container_name: goapp
     ports:
@@ -45,18 +45,17 @@ services:
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      POSTGRESQL_CONNECTION_STRING: postgres://gemsaauser:gemsaapass@postgres:5432/gemsaadb?sslmode=disable
+      POSTGRESQL_CONNECTION_STRING: postgres://exampleuser:examplepassword@postgres:5432/jobtrackkerdb?sslmode=disable
       JOBS_WORKER_TRIGGER_TIME: 30
       TZ: "Asia/Bangkok" # Set timezone to Thailand
 
   jobtracker-web:
-    image: go-web-jobtrackker:latest # Use the existing image if available
     build:
-      context: ../jobstracker-web/.
+      context: ./jobstracker-web
       dockerfile: Dockerfile
-    container_name: webapp
+    container_name: reactapp
     ports:
-      - "5435:80"
+      - "3000:80"
     environment:
       GOAPP_HOST: goapp
       GOAPP_PORT: 8080
@@ -65,12 +64,9 @@ services:
   jobtracker-service:
     image: python-worker-jobtrackker:latest # Use the existing image if available
     build:
-      context: ../jobtracker-service/.
+      context: ./jobtracker-service
       dockerfile: Dockerfile
     container_name: worker
-    # depends_on:
-    #   jobtracker-api:
-    #     condition: service_healthy
     ports:
       - "8000:8000"
     environment:

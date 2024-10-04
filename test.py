@@ -1,11 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
-import json
-
 
 def scrape_job_details(listId: list):
-    
-    ListSuperDetail = {}
+    ListSuperDetail = []
     for i in listId:
         url = "https://th.jobsdb.com/th/job/" + i + "?type=standout&ref=search-standalone"
         response = requests.get(url)
@@ -37,9 +34,4 @@ def scrape_job_details(listId: list):
                 # This is a list of items under the current section
                 items = [li.get_text(strip=True) for li in element.find_all('li')]
                 job_details[current_section].extend(items)
-        ListSuperDetail[i] = job_details
-    urlgo = "http://127.0.0.1:8080/api/workerhandler"
-    body = ListSuperDetail
-    headers = {'Content-Type': 'application/json'}
-    response = requests.put(urlgo, data=json.dumps(body), headers=headers)
-    print("Response Status Code : ", response.status_code)
+        ListSuperDetail.append(job_details)

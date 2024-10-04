@@ -3,6 +3,7 @@ package handlers
 import (
 	"jobtrackker/handlers/jobscheduling"
 	"jobtrackker/handlers/jobscrapelist"
+	"jobtrackker/handlers/workerhandler"
 	"jobtrackker/internal/web"
 	"jobtrackker/middleware"
 
@@ -36,6 +37,7 @@ func registerPublicHandlers(root fiber.Router) {
 		new(FormHandler),
 		new(jobscheduling.JobschedulingHandler),
 		new(jobscrapelist.JobscrapelistHandler),
+		new(workerhandler.WorkerHandler),
 	)
 
 	handlers.Init(root)

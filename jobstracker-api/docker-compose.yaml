@@ -2,19 +2,19 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:16
     container_name: postgres
     environment:
-      POSTGRES_USER: gemsaauser
-      POSTGRES_PASSWORD: gemsaapass
-      POSTGRES_DB: gemsaadb
+      POSTGRES_USER: exampleuser
+      POSTGRES_PASSWORD: examplepassword
+      POSTGRES_DB: jobtrackkerdb
       TZ: "Asia/Bangkok" # Set timezone to Thailand
     ports:
       - "5432:5432"
     volumes:
-      - D:\Programer_eieiza\ProjectWork\PERSONAL_PROJECT\WEBAPPJOBTRACKER\storage\postgresql:/var/lib/postgresql/data
+      - D:/Programer_eieiza/ProjectWork/PERSONAL_PROJECT/WEBAPPJOBTRACKER/storage/postgresql:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U gemsaauser"]
+      test: ["CMD-SHELL", "pg_isready -U exampleuser"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -27,12 +27,12 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - D:\Programer_eieiza\ProjectWork\PERSONAL_PROJECT\WEBAPPJOBTRACKER\storage\redis:/data
+      - D:/Programer_eieiza/ProjectWork/PERSONAL_PROJECT/WEBAPPJOBTRACKER/storage/redis:/data
 
-  goapp:
+  jobtracker-api:
     image: go-api-jobtrackker:latest # Use the existing image if available
     build:
-      context: .
+      context: ../jobstracker-api/.
       dockerfile: Dockerfile
     container_name: goapp
     ports:
@@ -40,13 +40,10 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_started
     environment:
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      POSTGRESQL_CONNECTION_STRING: postgres://gemsaauser:gemsaapass@postgres:5432/gemsaadb?sslmode=disable
-      JOBS_WORKER_TRIGGER_TIME: 30
+      POSTGRESQL_CONNECTION_STRING: postgres://exampleuser:examplepassword@postgres:5432/jobtrackkerdb?sslmode=disable
+      JOBSURL: https://th.jobsdb.com/api/chalice-search/v4/search
+      # JOBS_WORKER_TRIGGER_TIME: 30
       TZ: "Asia/Bangkok" # Set timezone to Thailand
 
 volumes:
