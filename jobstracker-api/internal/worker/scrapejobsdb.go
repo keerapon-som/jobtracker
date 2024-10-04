@@ -4,10 +4,15 @@ import (
 
 	// Add this import statement
 
+	"fmt"
+	"io"
 	"jobtrackker/internal/cache/jobschedulingcache"
+	"jobtrackker/internal/config"
 	"jobtrackker/internal/data/db"
 	"jobtrackker/internal/repo"
 	"jobtrackker/internal/service/jobsdbsvc"
+	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -36,6 +41,49 @@ func Checkalldb() {
 		datar := repo.NewJobDataRepo()
 		datar.CreateTable()
 	})
+}
+
+func TickerGetJobsSuperDetail() {
+	// svc := jobsdbsvc.NewJobHistoryDetailssvc()
+	// ticker := time.NewTicker(1 * time.Minute)
+	// defer ticker.Stop()
+
+	// for range ticker.C {
+	// 	now := time.Now()
+	// 	if now.Minute() == 0 || now.Minute() == 30 {
+	// 		go svc.ScrapeToJobsDataDetails()
+	// 	}
+	// }
+	config := config.GetConfig()
+	PythonServerPath := config.PythonServerPath
+
+	url := PythonServerPath + "/scrape-job"
+	method := "POST"
+
+	payload := strings.NewReader(`{` + "" + `"listId":["79281362","78728644","79237400"]` + "" + `}`)
+
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, payload)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(string(body))
 }
 
 func TickerScheduler() {

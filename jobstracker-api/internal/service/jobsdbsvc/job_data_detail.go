@@ -14,7 +14,7 @@ import (
 type IJobHistoryDetailssvc interface {
 	// TickerRunsJobs()
 	ScrapeToJobsDataDetails() error
-	InsertOrUpdateJobsSuperDetail(detailsData map[string]map[string]interface{}) error
+	UpdateJobsSuperDetail(detailsData map[string]map[string]interface{}) error
 }
 
 func NewJobHistoryDetailssvc() IJobHistoryDetailssvc {
@@ -142,13 +142,10 @@ func (w jobHistoryDetailssvc) ScrapeToJobsDataDetails() error {
 	return nil
 }
 
-func (r jobHistoryDetailssvc) InsertOrUpdateJobsSuperDetail(detailsData map[string]map[string]interface{}) error {
+func (r jobHistoryDetailssvc) UpdateJobsSuperDetail(detailsData map[string]map[string]interface{}) error {
 	var ListUpdate []data.JobsDatadetailsData
 
 	for id, value := range detailsData {
-		fmt.Println("ID IS : ", id)
-		fmt.Println("VALUE IS : ", value)
-		fmt.Println("--------------------------------------------------------------------------")
 		id, err := strconv.Atoi(id)
 		if err != nil {
 			return err
@@ -160,7 +157,7 @@ func (r jobHistoryDetailssvc) InsertOrUpdateJobsSuperDetail(detailsData map[stri
 		ListUpdate = append(ListUpdate, dataToappend)
 	}
 	j := repo.NewJobsdbDetail()
-	err := j.InsertOrUpdateJobsSuperDetail(ListUpdate)
+	err := j.UpdateJobsSuperDetail(ListUpdate)
 	if err != nil {
 		return err
 	}

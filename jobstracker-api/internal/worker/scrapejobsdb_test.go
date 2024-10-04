@@ -66,3 +66,10 @@ func TestTickerScheduler(t *testing.T) {
 
 	TickerScheduler()
 }
+
+func TestTickSuperDetail(t *testing.T) {
+	// config := config.GetConfig()
+	// postgresqldb.Init(config.PostgreSQL.ConnectionString)
+
+	TickerGetJobsSuperDetail()
+}

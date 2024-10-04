@@ -11,7 +11,7 @@ import (
 type JobsdbDetail interface {
 	CreateTable() error
 	InsertOrUpdateJobs(jobs []data.JobsDatadetailsData) error
-	InsertOrUpdateJobsSuperDetail(jobs []data.JobsDatadetailsData) error
+	UpdateJobsSuperDetail(jobs []data.JobsDatadetailsData) error
 	// GetListSchedule()
 }
 
@@ -43,8 +43,9 @@ func (r jobsdbDetail) CreateTable() error {
 			salary TEXT NOT NULL,
 			teaser TEXT NOT NULL,
 			work_type TEXT NOT NULL,
-			latest_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-		)`)
+			latest_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			superdetail JSONB
+		);`)
 	if err != nil {
 		log.Println("error in create table")
 		return err
@@ -95,33 +96,25 @@ func (r jobsdbDetail) InsertOrUpdateJobs(jobs []data.JobsDatadetailsData) error 
 	return err
 }
 
-func (r jobsdbDetail) InsertOrUpdateJobsSuperDetail(jobs []data.JobsDatadetailsData) error {
+func (r jobsdbDetail) UpdateJobsSuperDetail(jobs []data.JobsDatadetailsData) error {
 	query := `
-		INSERT INTO public.jobsdatadetails (
-			id, super_detail
-		) VALUES
+		UPDATE public.jobsdatadetails
+		SET superdetail = $1
+		WHERE id = $2
 	`
 
-	values := []interface{}{}
-	for i, job := range jobs {
-		query += fmt.Sprintf("($%d, $%d),",
-			i*2+1, i*2+2)
-		values = append(values, job.Id, job.SuperDetail)
-	}
-
-	query = query[:len(query)-1] // Remove the trailing comma
-
-	query += `
-		ON CONFLICT (id) DO UPDATE SET
-			super_detail = EXCLUDED.super_detail,
-			latest_update = CURRENT_TIMESTAMP;
-	`
 	db := postgresqldb.NewRepo().DB()
 	if db == nil {
 		log.Println("db is nil")
 		return errors.New("error init db")
 	}
 
-	_, err := db.Exec(query, values...)
-	return err
+	for _, job := range jobs {
+		_, err := db.Exec(query, job.SuperDetail, job.Id)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

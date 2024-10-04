@@ -47,6 +47,7 @@ services:
       REDIS_PORT: 6379
       POSTGRESQL_CONNECTION_STRING: postgres://exampleuser:examplepassword@postgres:5432/jobtrackkerdb?sslmode=disable
       JOBS_WORKER_TRIGGER_TIME: 30
+      PYTHONSERVERPATH: http://localhost:8000
       TZ: "Asia/Bangkok" # Set timezone to Thailand
 
   jobtracker-web:
@@ -57,8 +58,8 @@ services:
     ports:
       - "3000:80"
     environment:
-      GOAPP_HOST: goapp
-      GOAPP_PORT: 8080
+      VITE_API_URL: http://localhost:8080
+      VITE_APP_WEBURL: localhost:3000
       TZ: "Asia/Bangkok" # Set timezone to Thailand
 
   jobtracker-service:
@@ -70,8 +71,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      GOAPP_HOST: goapp
-      GOAPP_PORT: 8080
+      GOSERVER: http://localhost:8080
       TZ: "Asia/Bangkok" # Set timezone to Thailand
 
 volumes:

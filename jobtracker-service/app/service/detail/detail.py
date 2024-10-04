@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import json
+from app.config import GO_SERVER
 
 
 def scrape_job_details(listId: list):
@@ -38,7 +39,8 @@ def scrape_job_details(listId: list):
                 items = [li.get_text(strip=True) for li in element.find_all('li')]
                 job_details[current_section].extend(items)
         ListSuperDetail[i] = job_details
-    urlgo = "http://127.0.0.1:8080/api/workerhandler"
+
+    urlgo = GO_SERVER + "/api/workerhandler"
     body = ListSuperDetail
     headers = {'Content-Type': 'application/json'}
     response = requests.put(urlgo, data=json.dumps(body), headers=headers)

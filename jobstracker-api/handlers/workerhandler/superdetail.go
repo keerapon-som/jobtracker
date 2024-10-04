@@ -24,7 +24,7 @@ func (h *WorkerHandler) UpdateJobSuperDetail(c *fiber.Ctx) error {
 	}
 
 	svc := jobsdbsvc.NewJobHistoryDetailssvc()
-	err = svc.InsertOrUpdateJobsSuperDetail(detailsData)
+	err = svc.UpdateJobsSuperDetail(detailsData)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": err.Error(),

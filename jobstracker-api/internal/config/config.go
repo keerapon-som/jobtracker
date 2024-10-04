@@ -23,6 +23,7 @@ type Config struct {
 	JobsWorkerTriggerTime int
 	ItemsPerPage          int
 	JobsUrls              string
+	PythonServerPath      string
 }
 
 type PostgreSQL struct {
@@ -80,6 +81,7 @@ func doInit() {
 		JobsWorkerTriggerTime: getEnvInt("JOBS_WORKER_TRIGGER_TIME", 30),
 		ItemsPerPage:          getEnvInt("ItemsPerPage", 50),
 		JobsUrls:              getEnvString("JOBSURL", ""),
+		PythonServerPath:      getEnvString("PYTHONSERVERPATH", ""),
 	}
 }
 
