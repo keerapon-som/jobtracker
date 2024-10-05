@@ -19,18 +19,18 @@ services:
       timeout: 5s
       retries: 5
 
-  redis:
-    image: redis:latest
-    container_name: redis
-    environment:
-      TZ: "Asia/Bangkok" # Set timezone to Thailand
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
+  # redis:
+  #   image: redis:latest
+  #   container_name: redis
+  #   environment:
+  #     TZ: "Asia/Bangkok" # Set timezone to Thailand
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
 
   jobtracker-api:
-    image: go-api-jobtrackker:latest # Use the existing image if available
+    # image: go-api-jobtrackker:latest # Use the existing image if available
     build:
       context: ./jobstracker-api
       dockerfile: Dockerfile
@@ -40,14 +40,14 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_started
+      # redis:
+      #   condition: service_started
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       POSTGRESQL_CONNECTION_STRING: postgres://exampleuser:examplepassword@postgres:5432/jobtrackkerdb?sslmode=disable
       JOBS_WORKER_TRIGGER_TIME: 30
-      PYTHONSERVERPATH: http://localhost:8000
+      PYTHONSERVERPATH: http://jobtracker-service:8000
       TZ: "Asia/Bangkok" # Set timezone to Thailand
 
   jobtracker-web:
@@ -58,12 +58,12 @@ services:
     ports:
       - "3000:80"
     environment:
-      VITE_API_URL: http://localhost:8080
+      VITE_API_URL: http://jobtracker-api:8080
       VITE_APP_WEBURL: localhost:3000
       TZ: "Asia/Bangkok" # Set timezone to Thailand
 
   jobtracker-service:
-    image: python-worker-jobtrackker:latest # Use the existing image if available
+    # image: python-worker-jobtrackker:latest # Use the existing image if available
     build:
       context: ./jobtracker-service
       dockerfile: Dockerfile
@@ -71,9 +71,9 @@ services:
     ports:
       - "8000:8000"
     environment:
-      GOSERVER: http://localhost:8080
+      GOSERVER: http://jobtracker-api:8080
       TZ: "Asia/Bangkok" # Set timezone to Thailand
 
 volumes:
   postgres_data:
-  redis_data:
+  # redis_data:

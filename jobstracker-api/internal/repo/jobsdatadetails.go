@@ -132,6 +132,7 @@ func (r jobsdbDetail) SelectUpdateListSuperDetail(length int) ([]db.JobsDatadeta
 	query := `
         SELECT id, advertiser_id, advertiser_name, area, area_id, area_where_value, country_code, listing_date, role_id, title, salary, teaser, work_type, latest_update, superdetail
         FROM public.jobsdatadetails
+        WHERE superdetail IS NULL
         LIMIT $1
     `
 
