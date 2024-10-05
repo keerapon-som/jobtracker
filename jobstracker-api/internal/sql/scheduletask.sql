@@ -3,7 +3,6 @@
 --     jobname TEXT NOT NULL, UNIQUE(jobname),
 --     getjobsCount boolean DEFAULT false,
 --     getjobsDetails boolean DEFAULT false,
---     getjobsSuperDetails boolean DEFAULT false,
 --     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 -- );
 

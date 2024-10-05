@@ -31,14 +31,13 @@ func (w jobscrapelistsvc) GetScrapList(page int, pageSize int) ([]webdata.Jobscr
 	var respData []webdata.JobscrapeListwebData
 	for i, jobdata := range scheduleDatas {
 		respData = append(respData, webdata.JobscrapeListwebData{
-			Index:               i + 1,
-			UUID:                jobdata.UUID,
-			ID:                  jobdata.ID,
-			Jobname:             jobdata.Jobname,
-			GetjobsCount:        jobdata.GetjobsCount,
-			GetjobsDetails:      jobdata.GetjobsDetails,
-			GetjobsSuperDetails: jobdata.GetjobsSuperDetails,
-			CreatedAt:           jobdata.CreatedAt,
+			Index:          i + 1,
+			UUID:           jobdata.UUID,
+			ID:             jobdata.ID,
+			Jobname:        jobdata.Jobname,
+			GetjobsCount:   jobdata.GetjobsCount,
+			GetjobsDetails: jobdata.GetjobsDetails,
+			CreatedAt:      jobdata.CreatedAt,
 		})
 	}
 	if err != nil {

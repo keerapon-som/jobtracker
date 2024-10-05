@@ -51,7 +51,6 @@ func (r jobsdbToJobScrapeListRepo) CreateTable() error {
             UNIQUE(jobname),
             getjobsCount BOOLEAN DEFAULT false,
             getjobsDetails BOOLEAN DEFAULT false,
-            getjobsSuperDetails BOOLEAN DEFAULT false,
             created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
     `)
@@ -73,8 +72,8 @@ func (r jobsdbToJobScrapeListRepo) InsertJobList(data []data.Jobscrape_listdata)
 	}
 
 	query := `
-		INSERT INTO public.jobscrape_list (jobname, getjobsCount, getjobsDetails, getjobsSuperDetails)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO public.jobscrape_list (jobname, getjobsCount, getjobsDetails)
+		VALUES ($1, $2, $3)
 		ON CONFLICT (jobname) DO NOTHING;
 	`
 
@@ -91,7 +90,7 @@ func (r jobsdbToJobScrapeListRepo) InsertJobList(data []data.Jobscrape_listdata)
 	defer stmt.Close()
 
 	for _, job := range data {
-		_, err := stmt.Exec(job.Jobname, job.GetjobsCount, job.GetjobsDetails, job.GetjobsSuperDetails)
+		_, err := stmt.Exec(job.Jobname, job.GetjobsCount, job.GetjobsDetails)
 		if err != nil {
 			tx.Rollback()
 			return fmt.Errorf("failed to execute statement: %w", err)
@@ -154,10 +153,9 @@ func (r jobsdbToJobScrapeListRepo) InitialData() error {
 	var dataToinert []data.Jobscrape_listdata
 	for _, v := range modifiedList {
 		dataToinert = append(dataToinert, data.Jobscrape_listdata{
-			Jobname:             v, // Assuming the correct field name is JobTitle
-			GetjobsCount:        true,
-			GetjobsDetails:      false,
-			GetjobsSuperDetails: false,
+			Jobname:        v, // Assuming the correct field name is JobTitle
+			GetjobsCount:   true,
+			GetjobsDetails: false,
 		})
 	}
 
@@ -177,7 +175,7 @@ func (r jobsdbToJobScrapeListRepo) GetJobListScrapeWithPageSize(page int, pageSi
 	}
 
 	query := `
-		SELECT id,uuid,jobname, getjobsCount, getjobsDetails, getjobsSuperDetails, created_at
+		SELECT id,uuid,jobname, getjobsCount, getjobsDetails, created_at
 		FROM public.jobscrape_list
 		LIMIT $1 OFFSET $2
 	`
@@ -193,7 +191,7 @@ func (r jobsdbToJobScrapeListRepo) GetJobListScrapeWithPageSize(page int, pageSi
 	for rows.Next() {
 		var job db.Jobscrape_listrepo
 
-		err := rows.Scan(&job.ID, &job.UUID, &job.Jobname, &job.GetjobsCount, &job.GetjobsDetails, &job.GetjobsSuperDetails, &job.CreatedAt)
+		err := rows.Scan(&job.ID, &job.UUID, &job.Jobname, &job.GetjobsCount, &job.GetjobsDetails, &job.CreatedAt)
 		if err != nil {
 			log.Println("error in scan")
 			return nil, 0, err
@@ -233,11 +231,11 @@ func (r jobsdbToJobScrapeListRepo) UpdateJobScrapeList(jobData data.Jobscrape_li
 
 	query := `
 		UPDATE public.jobscrape_list
-		SET jobname = $1, getjobsCount = $2, getjobsDetails = $3, getjobsSuperDetails = $4
-		WHERE id = $5 and uuid = $6
+		SET jobname = $1, getjobsCount = $2, getjobsDetails = $3
+		WHERE id = $4 and uuid = $5
 	`
 
-	result, err := dbcon.Exec(query, jobData.Jobname, jobData.GetjobsCount, jobData.GetjobsDetails, jobData.GetjobsSuperDetails, jobData.ID, jobData.UUID)
+	result, err := dbcon.Exec(query, jobData.Jobname, jobData.GetjobsCount, jobData.GetjobsDetails, jobData.ID, jobData.UUID)
 	if err != nil {
 		log.Println("error in update")
 		return 0, err
@@ -260,13 +258,13 @@ func (r jobsdbToJobScrapeListRepo) CreateJobScrapeList(jobData data.Jobscrape_li
 	}
 
 	query := `
-		INSERT INTO public.jobscrape_list (jobname, getjobsCount, getjobsDetails, getjobsSuperDetails)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO public.jobscrape_list (jobname, getjobsCount, getjobsDetails)
+		VALUES ($1, $2, $3)
 		RETURNING id
 	`
 
 	var id int
-	err := dbcon.QueryRow(query, jobData.Jobname, jobData.GetjobsCount, jobData.GetjobsDetails, jobData.GetjobsSuperDetails).Scan(&id)
+	err := dbcon.QueryRow(query, jobData.Jobname, jobData.GetjobsCount, jobData.GetjobsDetails).Scan(&id)
 	if err != nil {
 		log.Println("error in insert")
 		return 0, err

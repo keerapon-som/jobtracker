@@ -36,9 +36,24 @@ func (r scheduletaskRepo) CreateTable() error {
 		return errors.New("error init db")
 	}
 
-	_, err := db.Exec("CREATE TABLE IF NOT EXISTS public.jobscrape_list (id SERIAL PRIMARY KEY, jobname TEXT NOT NULL, UNIQUE(jobname), getjobsCount boolean DEFAULT false, getjobsDetails boolean DEFAULT false, getjobsSuperDetails boolean DEFAULT false, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)")
+	query := `
+    CREATE TABLE IF NOT EXISTS public.scheduletask (
+        id SERIAL PRIMARY KEY,
+        uuid UUID NOT NULL DEFAULT gen_random_uuid(),
+        taskname TEXT NOT NULL,
+        tasktype TEXT NOT NULL,
+        taskstatus TEXT NOT NULL,
+        taskdescription TEXT,
+        hours_trigger INTEGER NOT NULL,
+        minute_trigger INTEGER NOT NULL,
+        list_weekdays_trigger TEXT[] NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    `
+
+	_, err := db.Exec(query)
 	if err != nil {
-		log.Println("error in create table")
+		log.Println("error in create table:", err)
 		return err
 	}
 

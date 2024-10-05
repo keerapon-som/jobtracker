@@ -160,7 +160,7 @@ func contains(s []string, e string) bool {
 
 func ValidateJobscheduleTable(jobschedule webdata.Scheduletaskreq) error {
 	var dayList = []string{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}
-	var taskTypeList = []string{"getjobsCount", "getjobsdetails", "getjobsSuperDetails"}
+	var taskTypeList = []string{"getjobsCount", "getjobsdetails"}
 	var taskStatusList = []string{"Active", "Deactive"}
 	var hoursTriggerCheck = 24
 	var minuteTriggerCheck = 60

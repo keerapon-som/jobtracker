@@ -34,14 +34,14 @@ func TickerRunsJobs() {
 
 var once sync.Once
 
-func Checkalldb() {
-	once.Do(func() {
-		collectr := repo.NewJobsdbToJobScrapeListRepo()
-		collectr.CreateTable()
-		datar := repo.NewJobDataRepo()
-		datar.CreateTable()
-	})
-}
+// func Checkalldb() {
+// 	once.Do(func() {
+// 		collectr := repo.NewJobsdbToJobScrapeListRepo()
+// 		collectr.CreateTable()
+// 		datar := repo.NewJobDataRepo()
+// 		datar.CreateTable()
+// 	})
+// }
 
 func TickerGetJobsSuperDetail() {
 	// svc := jobsdbsvc.NewJobHistoryDetailssvc()

@@ -18,14 +18,18 @@ func main() {
 		// worker.CloseZeebe()
 	}()
 	postgresqldb.Init(config.PostgreSQL.ConnectionString)
-	worker.Checkalldb()
+	repo := repo.NewDataRepo()
+	err := repo.CreateAllTable()
+	if err != nil {
+		panic("error in create table")
+	}
 
 	// justrun one time
-	repo := repo.NewJobsdbToJobScrapeListRepo()
-	err := repo.InitialData()
-	if err != nil {
-		panic("error in initiate")
-	}
+	// repo := repo.NewJobsdbToJobScrapeListRepo()
+	// err := repo.InitialData()
+	// if err != nil {
+	// 	panic("error in initiate")
+	// }
 
 	// jobsdbsvc.NewJobcountHistorysvc().ScrapeJobDataToDB()
 	go worker.TickerScheduler()

@@ -46,10 +46,9 @@ func TestSaveEIEI(t *testing.T) {
 	var dataToinert []data.Jobscrape_listdata
 	for _, v := range modifiedList {
 		dataToinert = append(dataToinert, data.Jobscrape_listdata{
-			Jobname:             v, // Assuming the correct field name is JobTitle
-			GetjobsCount:        true,
-			GetjobsDetails:      false,
-			GetjobsSuperDetails: false,
+			Jobname:        v, // Assuming the correct field name is JobTitle
+			GetjobsCount:   true,
+			GetjobsDetails: false,
 		})
 	}
 
