@@ -122,9 +122,9 @@ export const EditModal: React.FC = () => {
   };
 
   return (
-    <div className="w-[512px] h-[450px]">
+    <div className="min-w-[250px] overflow-auto">
       <div>
-        <div className="pt-8 text-lg font-bold px-5">
+        <div className="pt-8 text-lg font-bold px-5 whitespace-nowrap">
           Do you want to Edit this task?
         </div>
         <div className="pt-4 px-5">
@@ -200,7 +200,7 @@ export const EditModal: React.FC = () => {
           <div className="flex justify-between py-2">
             <span className="font-bold">task description:</span>
             <span
-              className={`ml-4 ${
+              className={`whitespace-nowrap ml-4 ${
                 Jobscheduling.currentSelection.taskdescription !==
                 Jobscheduling.confirmEditData.taskdescription
                   ? "text-red-500"
@@ -364,9 +364,9 @@ export const AddModal: React.FC<AddModalProps> = ({
   };
 
   return (
-    <div className="w-[512px] h-[450px]">
+    <div className="min-w-[250px] overflow-auto">
       <div>
-        <div className="text-2xl font-bold pb-5 text-blue-400">
+        <div className="text-2xl font-bold pb-5 px-5 text-blue-400 whitespace-nowrap">
           Do you want to Add this task?
         </div>
         <div className="pt-4 px-5">
@@ -394,7 +394,7 @@ export const AddModal: React.FC<AddModalProps> = ({
             <span className="font-bold">minute trigger:</span>
             <span className="ml-4">{formData.minute_trigger}</span>
           </div>
-          <div className="flex justify-between py-2">
+          <div className="flex justify-between py-2 whitespace-nowrap">
             <span className="font-bold">list weekdays trigger:</span>
             <span className="ml-4">
               {formData.list_weekdays_trigger.join(", ")}
@@ -483,7 +483,7 @@ export const InputForm: React.FC = () => {
   };
 
   return (
-    <div className="pt-10  w-[300px] h-[500px] md:w-[512px] md:h-[600px] lg:w-[512px] lg:h-[700px] xl:w-[512px] xl:h-[750px] overflow-auto p-6 bg-slate-800 rounded-lg shadow-md">
+    <div className="pt-10 w-[300px] md:w-[512px] lg:w-[512px] xl:w-[512pxoverflow-auto p-6 bg-slate-800 rounded-lg shadow-md">
       {showConfirmModal ? (
         <AddModal
           formData={formData}
@@ -522,7 +522,6 @@ export const InputForm: React.FC = () => {
               >
                 <option value="getjobsCount">getjobsCount</option>
                 <option value="getjobsdetails">getjobsdetails</option>
-                <option value="getjobsSuperDetails">getjobsSuperDetails</option>
               </select>
             </div>
             <div className="flex flex-col">

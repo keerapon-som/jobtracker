@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start": "vite",
     "clean": "shx rm -rf dist && shx rm -rf tsconfig.tsbuildinfo",
     "build": "npm run clean && tsc -b && vite build",
     "lint": "eslint .",

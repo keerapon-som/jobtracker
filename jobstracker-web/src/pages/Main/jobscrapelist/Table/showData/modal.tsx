@@ -42,7 +42,7 @@ export const DeleteModal: React.FC = () => {
 
 
   return (
-    <div className="w-[512px] h-40">
+    <div className="w-[488px] p-6 h-40">
       <div>
         <div className="pt-8 text-lg font-bold px-5">
           Do you want to delete this job?
@@ -84,7 +84,6 @@ export const EditModal: React.FC = () => {
       jobname: Jobscrapelist.confirmEditData.jobname,
       getjobsCount: Jobscrapelist.confirmEditData.getjobsCount,
       getjobsDetails: Jobscrapelist.confirmEditData.getjobsDetails,
-      getjobsSuperDetails: Jobscrapelist.confirmEditData.getjobsSuperDetails,
     };
 
     fetch(`${config.APIURL}/api/jobscrapelist`, {
@@ -118,7 +117,7 @@ export const EditModal: React.FC = () => {
   };
 
   return (
-    <div className="w-[512px] h-80">
+    <div className="w-[488px] h-80">
       <div>
         <div className="pt-8 text-lg font-bold px-5">
           Do you want to Edit this job?
@@ -207,36 +206,6 @@ export const EditModal: React.FC = () => {
           </div>
           <div className="flex justify-between py-2">
             <span className="font-bold">Get Jobs Super Details:</span>
-            <span
-              className={`ml-4 ${
-                Jobscrapelist.currentSelection.getjobsSuperDetails !==
-                Jobscrapelist.confirmEditData.getjobsSuperDetails
-                  ? "text-red-500"
-                  : "text-green-500"
-              }`}
-            >
-              {Jobscrapelist.currentSelection.getjobsSuperDetails !==
-              Jobscrapelist.confirmEditData.getjobsSuperDetails ? (
-                <>
-                  <span className="line-through">
-                    {Jobscrapelist.currentSelection.getjobsSuperDetails
-                      ? "Yes"
-                      : "No"}
-                  </span>{" "}
-                  <span>
-                    {Jobscrapelist.confirmEditData.getjobsSuperDetails
-                      ? "Yes"
-                      : "No"}
-                  </span>
-                </>
-              ) : (
-                <span>
-                  {Jobscrapelist.currentSelection.getjobsSuperDetails
-                    ? "Yes"
-                    : "No"}
-                </span>
-              )}
-            </span>
           </div>
         </div>
       </div>
@@ -266,7 +235,6 @@ interface AddModalProps {
     jobname: string;
     getjobsCount: boolean;
     getjobsDetails: boolean;
-    getjobsSuperDetails: boolean;
   };
   setShowConfirmModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -276,7 +244,6 @@ interface AddModalProps {
     jobname: string;
     getjobsCount: boolean;
     getjobsDetails: boolean;
-    getjobsSuperDetails: boolean;
   };
   setShowConfirmModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -293,7 +260,6 @@ export const AddModal: React.FC<AddModalProps> = ({
       jobname: formData.jobname,
       getjobsCount: formData.getjobsCount,
       getjobsDetails: formData.getjobsDetails,
-      getjobsSuperDetails: formData.getjobsSuperDetails,
     };
 
     fetch(`${config.APIURL}/api/jobscrapelist/`, {
@@ -322,7 +288,7 @@ export const AddModal: React.FC<AddModalProps> = ({
   };
 
   return (
-    <div className="w-[512px] h-80">
+    <div className="w-[488px] h-80">
       <div>
         <div className="text-2xl font-bold pb-5 text-blue-400">Do you want to Add this job?</div>
         <div className="pt-4 px-5">
@@ -340,12 +306,6 @@ export const AddModal: React.FC<AddModalProps> = ({
             <span className="font-bold">Get Jobs Details:</span>
             <span className="ml-4 text-green-500">
               {formData.getjobsDetails ? "Yes" : "No"}
-            </span>
-          </div>
-          <div className="flex justify-between py-2">
-            <span className="font-bold">Get Jobs Super Details:</span>
-            <span className="ml-4 text-green-500">
-              {formData.getjobsSuperDetails ? "Yes" : "No"}
             </span>
           </div>
         </div>
@@ -377,7 +337,6 @@ export const InputForm: React.FC = () => {
     jobname: "",
     getjobsCount: false,
     getjobsDetails: false,
-    getjobsSuperDetails: false,
   });
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -411,7 +370,7 @@ export const InputForm: React.FC = () => {
   };
 
   return (
-    <div className="w-[512px] h-full p-6 bg-slate-800 rounded-lg shadow-md">
+    <div className="sm:w-[280px] md:w-[488px] h-full m-6 bg-slate-800 rounded-lg">
       {showConfirmModal ? (
         <AddModal
           formData={formData}
@@ -457,16 +416,6 @@ export const InputForm: React.FC = () => {
               className="mr-2"
             />
             <label className="font-semibold">Get Jobs Details</label>
-          </div>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              name="getjobsSuperDetails"
-              checked={formData.getjobsSuperDetails}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            <label className="font-semibold">Get Jobs Super Details</label>
           </div>
           <button
             type="submit"

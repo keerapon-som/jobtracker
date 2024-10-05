@@ -255,7 +255,6 @@ const ShowingData: React.FC<ShowingDataProps> = ({ TableData }) => {
                   >
                     <option value="getjobsCount">getjobsCount</option>
                     <option value="getjobsDetails">getjobsDetails</option>
-                    <option value="getjobsSuperDetails">getjobsSuperDetails</option>
                   </select>
                 ) : (
                   task.tasktype

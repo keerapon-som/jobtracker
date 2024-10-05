@@ -8,7 +8,6 @@ type TableProps = {
     jobname: string;
     getjobsCount: boolean;
     getjobsDetails: boolean;
-    getjobsSuperDetails: boolean;
     created_at: string;
   };
 
@@ -45,7 +44,6 @@ const initialMenuState: MenuState = {
         jobname: "",
         getjobsCount: false,
         getjobsDetails: false,
-        getjobsSuperDetails: false,
         created_at: "",
     },
     confirmEditData: {
@@ -55,7 +53,6 @@ const initialMenuState: MenuState = {
         jobname: "",
         getjobsCount: false,
         getjobsDetails: false,
-        getjobsSuperDetails: false,
         created_at: "",
     },
     totalsData: null,

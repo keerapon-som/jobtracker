@@ -20,7 +20,6 @@ type TableData = {
   jobname: string;
   getjobsCount: boolean;
   getjobsDetails: boolean;
-  getjobsSuperDetails: boolean;
   created_at: string;
 };
 
@@ -59,7 +58,6 @@ const ShowingData: React.FC<ShowingDataProps> = ({ TableData }) => {
     jobname: "",
     getjobsCount: false,
     getjobsDetails: false,
-    getjobsSuperDetails: false,
     created_at: "",
   });
 
@@ -141,17 +139,6 @@ const ShowingData: React.FC<ShowingDataProps> = ({ TableData }) => {
             </th>
             <th
               scope="col"
-              className="hover:text-white hover:cursor-pointer hover:bg-slate-600 min-w-10 px-2 py-3 border-gray-500 border"
-              onClick={() => handleclickheader("getjobsSuperDetails")}
-            >
-              <div className="flex place-items-center ">
-                {(currentSortBy == "getjobsSuperDetails" && currentSortDesc) ? <svg aria-labelledby="sortDownIconTitle" color="#befaf8" fill="none" height="24px" stroke="#befaf8" strokeLinecap="square" strokeLinejoin="miter" strokeWidth="1" viewBox="0 0 24 24" width="48px" xmlns="http://www.w3.org/2000/svg"><title id="sortDownIconTitle"/><path d="M11 9H17"/><path d="M11 5H19"/><path d="M11 13H15"/><path d="M10 17L7 20L4 17"/><path d="M7 5V19"/></svg> : null}
-                {(currentSortBy == "getjobsSuperDetails" && !currentSortDesc) ? <svg aria-labelledby="sortUpIconTitle" color="#befaf8" fill="none" height="24px" stroke="#befaf8" strokeLinecap="square" strokeLinejoin="miter" strokeWidth="1" viewBox="0 0 24 24" width="48px" xmlns="http://www.w3.org/2000/svg"><title id="sortUpIconTitle"/><path d="M11 16H17"/><path d="M11 20H19"/><path d="M11 12H15"/><path d="M4 8L7 5L10 8"/><path d="M7 20L7 6"/></svg> : null}
-                Get Jobs Super Details
-              </div>
-            </th>
-            <th
-              scope="col"
               className="hover:text-white hover:cursor-pointer hover:bg-slate-600 min-w-40 px-2 py-3 border-gray-500 border"
               onClick={() => handleclickheader("created_at")}
             >
@@ -225,22 +212,6 @@ const ShowingData: React.FC<ShowingDataProps> = ({ TableData }) => {
                   />
                 ) : task.getjobsDetails ? "Yes" : "No"}
               </td>
-              <td
-                className={`min-w-20 px-2 py-4 border-gray-500 border  ${
-                  task.getjobsSuperDetails ? "text-green-400" : "text-red-500"
-                }`}
-              >
-                {editMode[task.id] ? (
-                  <input
-                    type="checkbox"
-                    checked={editData.getjobsSuperDetails}
-                    onChange={(e) =>
-                      setEditData({ ...editData, getjobsSuperDetails: !editData.getjobsSuperDetails })
-                    }
-                    className="text-black w-full px-2 py-1 border rounded-md"
-                  />
-                ) : task.getjobsSuperDetails ? "Yes" : "No"}
-              </td>
               <td className="px-2 py-4 border-gray-500 border ">
                 {task.created_at}
               </td>
@@ -272,7 +243,6 @@ const ShowingData: React.FC<ShowingDataProps> = ({ TableData }) => {
                           jobname: "",
                           getjobsCount: false,
                           getjobsDetails: false,
-                          getjobsSuperDetails: false,
                           created_at: "",
                         });
                       }}
