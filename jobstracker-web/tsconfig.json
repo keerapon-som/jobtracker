@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "outDir": "./dist", // Output directory for compiled JavaScript files
+    "rootDir": "./src", // Root directory of your TypeScript source files
+    // "strict": true,
     "module": "es2020",
     "moduleResolution": "node",
     "esModuleInterop": true,
