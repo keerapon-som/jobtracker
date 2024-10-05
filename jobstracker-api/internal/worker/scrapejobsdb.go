@@ -4,16 +4,10 @@ import (
 
 	// Add this import statement
 
-	"fmt"
-	"io"
 	"jobtrackker/internal/cache/jobschedulingcache"
-	"jobtrackker/internal/config"
 	"jobtrackker/internal/data/db"
 	"jobtrackker/internal/repo"
 	"jobtrackker/internal/service/jobsdbsvc"
-	"net/http"
-	"strings"
-	"sync"
 	"time"
 
 	"github.com/gofiber/fiber/v2/log"
@@ -32,58 +26,10 @@ func TickerRunsJobs() {
 	}
 }
 
-var once sync.Once
-
-// func Checkalldb() {
-// 	once.Do(func() {
-// 		collectr := repo.NewJobsdbToJobScrapeListRepo()
-// 		collectr.CreateTable()
-// 		datar := repo.NewJobDataRepo()
-// 		datar.CreateTable()
-// 	})
-// }
-
 func TickerGetJobsSuperDetail() {
-	// svc := jobsdbsvc.NewJobHistoryDetailssvc()
-	// ticker := time.NewTicker(1 * time.Minute)
-	// defer ticker.Stop()
-
-	// for range ticker.C {
-	// 	now := time.Now()
-	// 	if now.Minute() == 0 || now.Minute() == 30 {
-	// 		go svc.ScrapeToJobsDataDetails()
-	// 	}
-	// }
-	config := config.GetConfig()
-	PythonServerPath := config.PythonServerPath
-
-	url := PythonServerPath + "/scrape-job"
-	method := "POST"
-
-	payload := strings.NewReader(`{` + "" + `"listId":["79281362","78728644","79237400"]` + "" + `}`)
-
-	client := &http.Client{}
-	req, err := http.NewRequest(method, url, payload)
-
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	res, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(string(body))
+	scrapeLength := 5
+	svc := jobsdbsvc.NewJobHistoryDetailssvc()
+	svc.TrickerWorkerScrapeSuperDetail(scrapeLength)
 }
 
 func TickerScheduler() {
@@ -99,9 +45,15 @@ func TickerScheduler() {
 		hours := now.Hour()
 		minutes := now.Minute()
 		weekday := now.Weekday().String()
-		log.Debug("Current time: ", now)
+		// log.Debug("Current time: ", now)
 		ScheduleTrigger = cacheManager.GetScheduleTaskCache()
-		log.Debug("ScheduleTrigger: ", ScheduleTrigger)
+		// log.Debug("ScheduleTrigger: ", ScheduleTrigger)
+		// do every five minute
+		if now.Minute()%5 == 0 {
+			go TickerGetJobsSuperDetail() // scrape job details every 1 minutes
+			log.Debug("Triggering task: TickerGetJobsSuperDetail")
+		}
+
 		if len(ScheduleTrigger) == 0 {
 			r := repo.NewScheduletaskRepo()
 			ScheduleTrigger, err := r.GetListSchedule()

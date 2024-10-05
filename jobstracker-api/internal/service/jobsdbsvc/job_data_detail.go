@@ -3,18 +3,21 @@ package jobsdbsvc
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"jobtrackker/internal/config"
 	"jobtrackker/internal/data" // Add this import statement
 	"jobtrackker/internal/repo"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type IJobHistoryDetailssvc interface {
 	// TickerRunsJobs()
 	ScrapeToJobsDataDetails() error
 	UpdateJobsSuperDetail(detailsData map[string]map[string]interface{}) error
+	TrickerWorkerScrapeSuperDetail(scrapeLength int) error
 }
 
 func NewJobHistoryDetailssvc() IJobHistoryDetailssvc {
@@ -144,7 +147,7 @@ func (w jobHistoryDetailssvc) ScrapeToJobsDataDetails() error {
 
 func (r jobHistoryDetailssvc) UpdateJobsSuperDetail(detailsData map[string]map[string]interface{}) error {
 	var ListUpdate []data.JobsDatadetailsData
-
+	fmt.Println("detailsData is : ", detailsData)
 	for id, value := range detailsData {
 		id, err := strconv.Atoi(id)
 		if err != nil {
@@ -157,9 +160,56 @@ func (r jobHistoryDetailssvc) UpdateJobsSuperDetail(detailsData map[string]map[s
 		ListUpdate = append(ListUpdate, dataToappend)
 	}
 	j := repo.NewJobsdbDetail()
+
+	fmt.Println("ListUpdate is : ", ListUpdate)
 	err := j.UpdateJobsSuperDetail(ListUpdate)
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (r jobHistoryDetailssvc) TrickerWorkerScrapeSuperDetail(scrapeLength int) error {
+	config := config.GetConfig()
+	PythonServerPath := config.PythonServerPath
+	repo := repo.NewJobsdbDetail()
+	data, err := repo.SelectUpdateListSuperDetail(scrapeLength) // do we need to adjustable ?
+	if err != nil {
+		log.Printf("error in get all, %v", err)
+	}
+
+	var ListId []string
+	for _, v := range data {
+		ListId = append(ListId, strconv.Itoa(v.Id))
+	}
+
+	url := PythonServerPath + "/scrape-job"
+	method := "POST"
+
+	// payload := strings.NewReader(`{` + "" + `"listId":["79281362","78728644","79237400"]` + "" + `}`)
+	payload := strings.NewReader(`{` + "" + `"listId":["` + strings.Join(ListId, `","`) + `"]` + "" + `}`)
+	fmt.Println("payload is : ", payload)
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, payload)
+
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	fmt.Println(string(body))
 	return nil
 }

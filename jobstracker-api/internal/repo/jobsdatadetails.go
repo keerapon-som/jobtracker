@@ -1,9 +1,12 @@
 package repo
 
 import (
+	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"jobtrackker/internal/data"
+	"jobtrackker/internal/data/db"
 	"jobtrackker/internal/utils/postgresqldb"
 	"log"
 )
@@ -12,6 +15,7 @@ type JobsdbDetail interface {
 	CreateTable() error
 	InsertOrUpdateJobs(jobs []data.JobsDatadetailsData) error
 	UpdateJobsSuperDetail(jobs []data.JobsDatadetailsData) error
+	SelectUpdateListSuperDetail(length int) ([]db.JobsDatadetailsDB, error)
 	// GetListSchedule()
 }
 
@@ -110,11 +114,80 @@ func (r jobsdbDetail) UpdateJobsSuperDetail(jobs []data.JobsDatadetailsData) err
 	}
 
 	for _, job := range jobs {
-		_, err := db.Exec(query, job.SuperDetail, job.Id)
+		superDetailJSON, err := json.Marshal(job.SuperDetail)
 		if err != nil {
+			return err
+		}
+		_, err = db.Exec(query, superDetailJSON, job.Id)
+		if err != nil {
+			log.Println("error in update super detail ", err)
 			return err
 		}
 	}
 
 	return nil
+}
+
+func (r jobsdbDetail) SelectUpdateListSuperDetail(length int) ([]db.JobsDatadetailsDB, error) {
+	query := `
+        SELECT id, advertiser_id, advertiser_name, area, area_id, area_where_value, country_code, listing_date, role_id, title, salary, teaser, work_type, latest_update, superdetail
+        FROM public.jobsdatadetails
+        LIMIT $1
+    `
+
+	dbpg := postgresqldb.NewRepo().DB()
+	if dbpg == nil {
+		log.Println("db is nil")
+		return nil, errors.New("error init db")
+	}
+
+	rows, err := dbpg.Query(query, length)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	jobs := []db.JobsDatadetailsDB{}
+	for rows.Next() {
+		job := db.JobsDatadetailsDB{}
+		var superDetailJSON sql.NullString
+
+		err := rows.Scan(
+			&job.Id,
+			&job.AdvertiserID,
+			&job.AdvertiserName,
+			&job.Area,
+			&job.AreaID,
+			&job.AreaWhereValue,
+			&job.CountryCode,
+			&job.ListingDate,
+			&job.RoleID,
+			&job.Title,
+			&job.Salary,
+			&job.Teaser,
+			&job.WorkType,
+			&job.LatestUpdate,
+			&superDetailJSON,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		if superDetailJSON.Valid {
+			err = json.Unmarshal([]byte(superDetailJSON.String), &job.SuperDetail)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			job.SuperDetail = nil
+		}
+
+		jobs = append(jobs, job)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return jobs, nil
 }
