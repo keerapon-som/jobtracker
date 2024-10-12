@@ -10,7 +10,7 @@ const Dashboard: React.FC = () => {
           </div>
           </div>
           <div className="flex justify-center">
-        <div id="content" className="min-h-full bg-blue-400 w-full max-w-7xl min-w-sm p-4">
+        <div id="content" className="min-h-full bg-slate-600 w-full max-w-7xl min-w-sm p-4">
     
           <div className="h-screen">
             hello

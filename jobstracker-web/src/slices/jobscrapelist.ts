@@ -60,7 +60,7 @@ const initialMenuState: MenuState = {
     loadingState: { loading: false, error: null },
     queryData: {
         page: 1,
-        pagesize: 5,
+        pagesize: 50,
         sorting: {
             sortBy: "ID",
             sortOrder: "desc",

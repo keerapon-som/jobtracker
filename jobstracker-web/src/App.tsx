@@ -8,7 +8,7 @@ import JobScheduling from '@/pages/Main/jobscheduling/index';
 import JobScrapeList from '@/pages/Main/jobscrapelist/index';
 // import About from './pages/About';
 import NotFound from '@/pages/Notfound';
-
+import Scan from '@/pages/Main/scan/index';
 // import { useSelector, useDispatch } from 'react-redux';
 // import { RootState } from './store';
 // import { increment, decrement } from './slices/counterSlice';
@@ -25,6 +25,8 @@ const App: React.FC = () => {
         <Route path="/Dashboard" element={<Dashboard />} />
         <Route path="/JobScheduling" element={<JobScheduling />} />
         <Route path="/JobScrapeList" element={<JobScrapeList />} />
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/Scan" element={<Scan />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

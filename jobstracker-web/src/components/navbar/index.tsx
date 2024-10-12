@@ -124,6 +124,7 @@ export function Navbar() {
               <div className="hidden sm:ml-6 sm:block">
                 <div className="flex space-x-4">
                   <a onClick={HandleClickMenu} id="Dashboard" className={getMenuClass('Dashboard','pc')} aria-current="page">Dashboard</a>
+                  <a onClick={HandleClickMenu} id="Scan" className={getMenuClass('Scan','pc')} >Scan</a>
                   <a onClick={HandleClickMenu} id="JobScheduling" className={getMenuClass('JobScheduling','pc')}>Job Scheduling</a>
                   <a onClick={HandleClickMenu} id="JobScrapeList" className={getMenuClass('JobScrapeList','pc')}>Job Scrape List</a>
 
@@ -184,6 +185,7 @@ export function Navbar() {
           <div className="sm:hidden" id="mobile-menu">
             <div className="space-y-1 px-2 pb-3 pt-16 fixed w-full bg-gray-800 z-10">
               <a onClick={HandleClickMenu} id="Dashboard" className={getMenuClass('Dashboard', 'mobile')} aria-current="page">Dashboard</a>
+              <a onClick={HandleClickMenu} id="Scan" className={getMenuClass('Scan', 'mobile')} aria-current="page">Scan</a>
               <a onClick={HandleClickMenu} id="JobScheduling" className={getMenuClass('JobScheduling', 'mobile')}>Job Scheduling</a>
               <a onClick={HandleClickMenu} id="JobScrapeList" className={getMenuClass('JobScrapeList', 'mobile')}>Job Scrape List</a>
             </div>

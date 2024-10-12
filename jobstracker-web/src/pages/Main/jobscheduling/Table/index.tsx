@@ -27,6 +27,15 @@ const Table: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  const handlegoto = (page: number) => {
+    const UpdateQueryData = {
+      ...Jobscheduling.queryData,
+      page,
+    };
+    dispatch(setQueryData(UpdateQueryData));
+    // updatelocation
+  }
+
   const handlenextpage = () => {
     if (
       Jobscheduling.queryData.page * Jobscheduling.queryData.pagesize >=
@@ -178,6 +187,7 @@ const Table: React.FC = () => {
       <PageSelect
         handlenextpage={handlenextpage}
         handleprevpage={handleprevpage}
+        handlegoto={handlegoto}
         page={Jobscheduling.queryData.page}
         pagesize={Jobscheduling.queryData.pagesize}
         totals={Jobscheduling.totalsData}

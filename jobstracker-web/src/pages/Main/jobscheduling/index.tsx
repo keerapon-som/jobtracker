@@ -30,7 +30,7 @@ const JobScheduling: React.FC = () => {
         <div className="flex justify-center">
           <div
             id="content"
-            className="bg-blue-300 w-full max-w-7xl mFin-w-sm p-2"
+            className="bg-slate-600 w-full max-w-7xl mFin-w-sm p-2"
           >
             <div>
               <TableJobScheduling />

@@ -28,6 +28,17 @@ const Table: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  const handlegoto = (page: number) => {
+    const UpdateQueryData = {
+      ...Jobscrapelist.queryData,
+      page,
+    };
+    dispatch(setQueryData(UpdateQueryData));
+
+    navigate(`${location.pathname}?${jsonToQueryString(UpdateQueryData)}`);
+    // updatelocation
+  }
+
   const handlenextpage = () => {
     if (
       Jobscrapelist.queryData.page * Jobscrapelist.queryData.pagesize >=
@@ -180,6 +191,7 @@ const Table: React.FC = () => {
       <PageSelect
         handlenextpage={handlenextpage}
         handleprevpage={handleprevpage}
+        handlegoto={handlegoto}
         page={Jobscrapelist.queryData.page}
         pagesize={Jobscrapelist.queryData.pagesize}
         totals={Jobscrapelist.totalsData}

@@ -1,5 +1,6 @@
 
 // import App from './App';
+import Pagination from './pagination';
 type PageSelectProps = {
 
   page: number;
@@ -8,7 +9,7 @@ type PageSelectProps = {
 
 };
 
-const PageSelect: React.FC<any> = ({handlenextpage,handleprevpage,page, pagesize,totals}) => {
+const PageSelect: React.FC<any> = ({handlenextpage,handleprevpage,handlegoto,page, pagesize,totals}) => {
 
     return (
       <>
@@ -16,22 +17,8 @@ const PageSelect: React.FC<any> = ({handlenextpage,handleprevpage,page, pagesize
             <p className="block text-sm">
               Showing {1 + (page-1)*pagesize} - {page*pagesize < totals ? page*pagesize : totals} of {totals}
             </p>
-            <div className="flex gap-1">
-            <button
-                disabled={page === 1}
-                onClick={handleprevpage}
-                className="rounded border border-slate-300 py-2.5 px-3 text-center text-xs font-semibold  transition-all hover:border-blue-300 focus:ring focus:ring-slate-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                type="button">
-                Previous
-            </button>
-            <button
-                disabled={page*pagesize >= totals}
-                onClick={handlenextpage}
-                className="rounded border border-slate-300 py-2.5 px-3 text-center text-xs font-semibold  transition-all hover:border-blue-300 focus:ring focus:ring-slate-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                type="button">
-                Next
-            </button>
-            </div>
+            <Pagination page={page} pagesize={pagesize} totals={totals} handlenextpage={handlenextpage} handleprevpage={handleprevpage} handlegoto={handlegoto}/>
+            <div>PageSize : {pagesize}</div>
         </div>
       </>
     );
