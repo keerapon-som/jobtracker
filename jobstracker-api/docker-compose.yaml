@@ -44,6 +44,7 @@ services:
       POSTGRESQL_CONNECTION_STRING: postgres://exampleuser:examplepassword@postgres:5432/jobtrackkerdb?sslmode=disable
       JOBSURL: https://th.jobsdb.com/api/chalice-search/v4/search
       PYTHONSERVERPATH : http://localhost:8000
+      OLLAMASERVERPATH : http://localhost:11434
       # JOBS_WORKER_TRIGGER_TIME: 30
       TZ: "Asia/Bangkok" # Set timezone to Thailand
 

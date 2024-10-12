@@ -24,6 +24,7 @@ type Config struct {
 	ItemsPerPage          int
 	JobsUrls              string
 	PythonServerPath      string
+	OllaMaServerPath      string
 }
 
 type PostgreSQL struct {
@@ -82,6 +83,7 @@ func doInit() {
 		ItemsPerPage:          getEnvInt("ItemsPerPage", 50),
 		JobsUrls:              getEnvString("JOBSURL", ""),
 		PythonServerPath:      getEnvString("PYTHONSERVERPATH", ""),
+		OllaMaServerPath:      getEnvString("OLLAMASERVERPATH", "http://localhost:11434/"),
 	}
 }
 

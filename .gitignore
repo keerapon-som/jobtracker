@@ -1,0 +1,21 @@
+# Ignore Docker volumes
+volumes/
+postgres_data/
+redis_data/
+# ollama/
+
+# Ignore Docker-related files
+*.log
+docker-compose.override.yml
+.env
+
+# Ignore node_modules for Node.js projects
+node_modules/
+
+# Ignore Python virtual environments
+venv/
+__pycache__/
+
+# Ignore build directories
+build/
+dist/

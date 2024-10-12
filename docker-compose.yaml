@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:16
+    image: postgres:16-alpine
     container_name: postgres
     environment:
       POSTGRES_USER: exampleuser
@@ -48,6 +48,7 @@ services:
       POSTGRESQL_CONNECTION_STRING: postgres://exampleuser:examplepassword@postgres:5432/jobtrackkerdb?sslmode=disable
       JOBS_WORKER_TRIGGER_TIME: 30
       PYTHONSERVERPATH: http://jobtracker-service:8000
+      OLLAMASERVERPATH: http://localhost:11434
       TZ: "Asia/Bangkok" # Set timezone to Thailand
 
   jobtracker-web:
@@ -74,6 +75,25 @@ services:
       GOSERVER: http://jobtracker-api:8080
       TZ: "Asia/Bangkok" # Set timezone to Thailand
 
+  ollama:
+    build:
+      context: ./ollama
+      dockerfile: Dockerfile
+    container_name: ollama
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    volumes:
+      - ./ollama/volumes:/root/.ollama
+    ports:
+      - "11434:11434"
+    environment:
+      TZ: "Asia/Bangkok" # Set timezone to Thailand
+
 volumes:
   postgres_data:
+  ollama:
   # redis_data:

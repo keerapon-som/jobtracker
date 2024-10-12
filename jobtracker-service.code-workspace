@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "jobtracker-service"
+		},
+		{
+			"path": "jobstracker-web"
+		},
+		{
+			"path": "jobstracker-api"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "ollama"
+		}
+	],
+	"settings": {}
+}
