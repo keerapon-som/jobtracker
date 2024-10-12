@@ -34,3 +34,8 @@ INSERT INTO public.jobsdatadetails (
     teaser = EXCLUDED.teaser,
     work_type = EXCLUDED.work_type,
     latest_update = CURRENT_TIMESTAMP;
+
+-- Search Where it have key Error
+SELECT *
+FROM public.jobsdatadetails
+WHERE superdetail ? 'Error';

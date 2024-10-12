@@ -27,7 +27,7 @@ func TickerRunsJobs() {
 }
 
 func TickerGetJobsSuperDetail() {
-	scrapeLength := 10
+	scrapeLength := 30
 	svc := jobsdbsvc.NewJobHistoryDetailssvc()
 	svc.TrickerWorkerScrapeSuperDetail(scrapeLength)
 }
