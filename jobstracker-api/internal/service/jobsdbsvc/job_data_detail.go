@@ -222,10 +222,15 @@ func (r jobHistoryDetailssvc) TrickerWorkerScrapeSuperDetail(scrapeLength int) e
 func (w jobHistoryDetailssvc) GetListDataAndTotals(page int, pagesize int) ([]db.JobsDatadetailsDB, int, error) {
 	r := repo.NewJobsdbDetail()
 	jobs, totals, err := r.GetListDataAndTotals(page, pagesize)
+	var DataManageIndex []db.JobsDatadetailsDB
+	for i, jobdata := range jobs {
+		jobdata.Index = i + 1
+		DataManageIndex = append(DataManageIndex, jobdata)
+	}
 	if err != nil {
 		return nil, 0, err
 	}
-	return jobs, totals, nil
+	return DataManageIndex, totals, nil
 }
 
 func (w jobHistoryDetailssvc) GetSuperDetailByID(id int) (map[string]interface{}, error) {

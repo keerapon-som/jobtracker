@@ -1,7 +1,6 @@
 import React from 'react';
-import Card from './components/cards';
-import Detail from './components/detail';
-
+import Joblists from './joblists';
+import Detail from './jobdetail/index';
 
 const Scan: React.FC = () => {
 
@@ -26,23 +25,11 @@ const Scan: React.FC = () => {
                        <button type="submit" className="border-2 border-green-400 p-1">Search</button>
                    </form>
                 </div>
-
-                
             </div>
             <div className="flex justify-center">
                 <div id="content" className="min-h-full bg-slate-600 w-full max-w-7xl min-w-sm flex">
-                    <div className="w-2/5">
-                    <Card/>
-                    <Card/>
-                    <Card/>
-                    <Card/>
-                    <Card/>
-                    <Card/>
-                    <Card/>
-                    <Card/>
-                    </div>
+                    <Joblists/>
                     <Detail/>
-
                 </div>
             </div>
             <div className="flex justify-center">

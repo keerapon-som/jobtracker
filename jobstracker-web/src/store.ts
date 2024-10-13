@@ -4,11 +4,13 @@ import loginReducer from './slices/login';
 import menuReducer from './slices/menu';
 import jobscrapelist from './slices/jobscrapelist';
 import jobscheduling from './slices/jobscheduling';
+import scan from './slices/scan';
 
 const store = configureStore({
   reducer: {
     login: loginReducer,
     menu: menuReducer,
+    scan: scan,
     jobscrapelist: jobscrapelist,
     jobscheduling: jobscheduling,
   },
