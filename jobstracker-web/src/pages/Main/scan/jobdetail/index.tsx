@@ -14,7 +14,7 @@ const MockupJsonData = {
 const Detail: React.FC = () => {
 
   const dispatch = useDispatch();
-  const Scan = useSelector((state: RootState) => state.scan.currentSelection);
+  const CurrentSelection = useSelector((state: RootState) => state.scan.currentSelection);
   const LoadingState = useSelector(
     (state: RootState) => state.scan.loadingState
   );
@@ -23,17 +23,16 @@ const Detail: React.FC = () => {
 
   //   useEffect(() => {
   //     setIsPretty(false);
-  //     if (Scan.superDetail != undefined) {
-  //       if (Scan.superDetail.job_details != undefined) {
-  //         setDetailData(Scan.superDetail.job_details.split("\n\n"));
+  //     if (CurrentSelection.superDetail != undefined) {
+  //       if (CurrentSelection.superDetail.job_details != undefined) {
+  //         setDetailData(CurrentSelection.superDetail.job_details.split("\n\n"));
   //       } else {
   //         setDetailData(["invalid data"]);
   //       }
   //     }
-  //   }, [Scan.superDetail]);
+  //   }, [CurrentSelection.superDetail]);
 
   const handleprettystate = (e) => {
-    const MockupJsonData = Scan.superDetail;
     if (e.target.id === "prettytext" && !isPretty) {
       setIsPretty(true);
     } else if (e.target.id === "rawtext" && isPretty) {
@@ -43,7 +42,7 @@ const Detail: React.FC = () => {
 
   const handleGeneratePrettyJson = () => {
     dispatch(setLoadingState({ loading: true, error: null }));
-    const id = Scan.id;
+    const id = CurrentSelection.id;
     const url = `${config.APIURL}/api/jobscan/${id}`;
     const method = "PATCH";
 
@@ -52,7 +51,7 @@ const Detail: React.FC = () => {
       // headers: {
       //     'Content-Type': 'application/json',
       // },
-      // body: JSON.stringify({ "job_details": Scan.superDetail.job_details })
+      // body: JSON.stringify({ "job_details": CurrentSelection.superDetail.job_details })
     })
       .then((response) => {
         if (!response.ok) {
@@ -64,12 +63,11 @@ const Detail: React.FC = () => {
         return response.json();
       })
       .then((data) => {
-        dispatch(
-          //// เดี๋ยวคิดว่าต้องทำให้ Response กลับมาเลย แต่เข้า State loading แล้ว Stamp state และจัด Message Q ที่หลังบ้านเอา
+        dispatch(//// เดี๋ยวคิดว่าต้องทำให้ Response กลับมาเลย แต่เข้า State loading แล้ว Stamp state และจัด Message Q ที่หลังบ้านเอา จะไม่ SetCurrentSelect ตรงนี้อีกต่อไป
           setCurrentSelection({
-            ...Scan,
+            ...CurrentSelection,
             superDetail: {
-              ...Scan.superDetail,
+              ...CurrentSelection.superDetail,
               job_details_pretty: data.data,
             },
           })
@@ -128,20 +126,22 @@ const Detail: React.FC = () => {
               </button>
             ) : null}
             {!isPretty
-              ? Scan.superDetail?.job_details
+              ? CurrentSelection.superDetail?.job_details
                   .split("\n\n")
                   .map((paragraph, index) => (
                     <p key={index} className="mb-4">
                       {paragraph}
                     </p>
                   ))
-              : Scan.superDetail?.job_details_pretty
-                  .split("\n\n")
-                  .map((paragraph, index) => (
-                    <p key={index} className="mb-4">
-                      {paragraph}
-                    </p>
-                  ))}
+                  : CurrentSelection.superDetail?.job_details_pretty
+                  ? CurrentSelection.superDetail.job_details_pretty
+                      .split("\n\n")
+                      .map((paragraph, index) => (
+                        <p key={index} className="mb-4">
+                          {paragraph}
+                        </p>
+                      ))
+                  : <div>Didn't Generate yet, Please Click Generate text</div>}
           </>
         ) : (
           <>
