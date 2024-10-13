@@ -12,43 +12,32 @@ const MockupJsonData = {
 };
 
 const Detail: React.FC = () => {
-  // const paragraphs = MockupJsonData.job_details.split("\n\n");
+
   const dispatch = useDispatch();
   const Scan = useSelector((state: RootState) => state.scan.currentSelection);
   const LoadingState = useSelector(
     (state: RootState) => state.scan.loadingState
   );
-  const [detailData, setDetailData] = React.useState([]);
+
   const [isPretty, setIsPretty] = React.useState(false);
 
-  useEffect(() => {
-    setIsPretty(false);
-    if (Scan.superDetail != undefined) {
-      if (Scan.superDetail.job_details != undefined) {
-        setDetailData(Scan.superDetail.job_details.split("\n\n"));
-      } else {
-        setDetailData(["invalid data"]);
-      }
-    }
-  }, [Scan.superDetail]);
+  //   useEffect(() => {
+  //     setIsPretty(false);
+  //     if (Scan.superDetail != undefined) {
+  //       if (Scan.superDetail.job_details != undefined) {
+  //         setDetailData(Scan.superDetail.job_details.split("\n\n"));
+  //       } else {
+  //         setDetailData(["invalid data"]);
+  //       }
+  //     }
+  //   }, [Scan.superDetail]);
 
   const handleprettystate = (e) => {
     const MockupJsonData = Scan.superDetail;
     if (e.target.id === "prettytext" && !isPretty) {
       setIsPretty(true);
-      if (MockupJsonData.job_details_pretty != undefined) {
-        setDetailData(MockupJsonData.job_details_pretty.split("\n\n"));
-      } else {
-        setDetailData(["กด เพื่อ Generate สำหรับ Pretty Text"]);
-      }
-      // setDetailData(MockupJsonData.job_details_pretty.split("\n\n"));
     } else if (e.target.id === "rawtext" && isPretty) {
       setIsPretty(false);
-      if (MockupJsonData.job_details != undefined) {
-        setDetailData(MockupJsonData.job_details.split("\n\n"));
-      } else {
-        setDetailData(["invalid data"]);
-      }
     }
   };
 
@@ -76,6 +65,7 @@ const Detail: React.FC = () => {
       })
       .then((data) => {
         dispatch(
+          //// เดี๋ยวคิดว่าต้องทำให้ Response กลับมาเลย แต่เข้า State loading แล้ว Stamp state และจัด Message Q ที่หลังบ้านเอา
           setCurrentSelection({
             ...Scan,
             superDetail: {
@@ -100,7 +90,6 @@ const Detail: React.FC = () => {
       className="px-2 bg-slate-600 w-3/5 overflow-auto sticky top-16 shadow"
       style={{ height: `calc(100vh - 64px)` }}
     >
-        
       <div className="bg-green-200 h-[60px] flex justify-center">
         <div
           onClick={handleprettystate}
@@ -127,25 +116,38 @@ const Detail: React.FC = () => {
         className="bg-gray-800 text-gray-300 p-4"
         style={{ minHeight: `calc(100vh - 124px)` }}
       >
-        {!LoadingState.loading ? <>
-        <h2 className="text-xl font-bold mb-4">Job Details</h2>
-        {Scan.superDetail?.job_details_pretty == undefined &&
-        isPretty == true ? (
-          <button
-            onClick={() => handleGeneratePrettyJson()}
-            className="bg-slate-700 h-10 w-60 p-2 border-2 border-gray-300 hover:border-blue-400 hover:cursor-pointer focus:border-4 focus:border-blue-600"
-          >
-            Generate Pretty text with AI
-          </button>
-        ) : null}
-        {detailData.map((paragraph, index) => (
-          <p key={index} className="mb-4">
-            {paragraph}
-          </p>
-        ))}
-        </> : <>
-        <div className="bg-gray-400 text-black h-20">Loading naja</div>
-        </>}
+        {!LoadingState.loading ? (
+          <>
+            <h2 className="text-xl font-bold mb-4">Job Details</h2>
+            {isPretty == true ? (
+              <button
+                onClick={() => handleGeneratePrettyJson()}
+                className="bg-slate-700 h-10 w-60 p-2 border-2 border-gray-300 hover:border-blue-400 hover:cursor-pointer focus:border-4 focus:border-blue-600"
+              >
+                Generate Pretty text with AI
+              </button>
+            ) : null}
+            {!isPretty
+              ? Scan.superDetail?.job_details
+                  .split("\n\n")
+                  .map((paragraph, index) => (
+                    <p key={index} className="mb-4">
+                      {paragraph}
+                    </p>
+                  ))
+              : Scan.superDetail?.job_details_pretty
+                  .split("\n\n")
+                  .map((paragraph, index) => (
+                    <p key={index} className="mb-4">
+                      {paragraph}
+                    </p>
+                  ))}
+          </>
+        ) : (
+          <>
+            <div className="bg-gray-400 text-black h-20">Loading naja</div>
+          </>
+        )}
       </div>
     </div>
   );
