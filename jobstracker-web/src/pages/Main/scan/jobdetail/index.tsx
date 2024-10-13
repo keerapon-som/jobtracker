@@ -1,71 +1,151 @@
 import React, { useEffect } from "react";
-import { RootState } from '@/store';
-import { useSelector } from 'react-redux';
+import { RootState } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
+import config from "@/config";
+import { setCurrentSelection, setLoadingState } from "@/slices/scan";
 
 const MockupJsonData = {
-    "job_details": "Required skills : Node.js / Typescript / restful api and web sockets. Data integrity concepts. Basic knowledge of microservices. Data structures.Higher consideration for candidate skilled : blockchain, golang, redis, lua, AWS, Kafka, DockerExperienced with Node.js,TypeScript more than 2 years or above with higher skill related inExperienced integrating with API, SocketIOGood spoken English is a plus.***New graduate with high programming skill are welcome***",
-    "job_details_pretty": "Here is the simplified text:\n\nRequired skills:\n\n* Node.js\n* Typescript\n* Restful APIs and WebSockets\n* Data integrity concepts\n* Basic knowledge of microservices\n* Data structures\n\nHigher consideration for candidate skilled in:\n\n* Blockchain\n* Golang\n* Redis\n* Lua\n* AWS\n* Kafka\n* Docker\n\nExperience with Node.js, TypeScript: more than 2 years or above.\n\nGood spoken English is a plus.\nNew graduates with high programming skills are welcome."
+  job_details:
+    "Required skills : Node.js / Typescript / restful api and web sockets. Data integrity concepts. Basic knowledge of microservices. Data structures.Higher consideration for candidate skilled : blockchain, golang, redis, lua, AWS, Kafka, DockerExperienced with Node.js,TypeScript more than 2 years or above with higher skill related inExperienced integrating with API, SocketIOGood spoken English is a plus.***New graduate with high programming skill are welcome***",
+  job_details_pretty:
+    "Here is the simplified text:\n\nRequired skills:\n\n* Node.js\n* Typescript\n* Restful APIs and WebSockets\n* Data integrity concepts\n* Basic knowledge of microservices\n* Data structures\n\nHigher consideration for candidate skilled in:\n\n* Blockchain\n* Golang\n* Redis\n* Lua\n* AWS\n* Kafka\n* Docker\n\nExperience with Node.js, TypeScript: more than 2 years or above.\n\nGood spoken English is a plus.\nNew graduates with high programming skills are welcome.",
 };
 
 const Detail: React.FC = () => {
-    // const paragraphs = MockupJsonData.job_details.split("\n\n");
+  // const paragraphs = MockupJsonData.job_details.split("\n\n");
+  const dispatch = useDispatch();
+  const Scan = useSelector((state: RootState) => state.scan.currentSelection);
+  const LoadingState = useSelector(
+    (state: RootState) => state.scan.loadingState
+  );
+  const [detailData, setDetailData] = React.useState([]);
+  const [isPretty, setIsPretty] = React.useState(false);
 
-    const Scan = useSelector((state: RootState) => state.scan);
-    const [detailData, setDetailData] = React.useState([]);
-    const [isPretty, setIsPretty] = React.useState(false);
+  useEffect(() => {
+    setIsPretty(false);
+    if (Scan.superDetail != undefined) {
+      if (Scan.superDetail.job_details != undefined) {
+        setDetailData(Scan.superDetail.job_details.split("\n\n"));
+      } else {
+        setDetailData(["invalid data"]);
+      }
+    }
+  }, [Scan.superDetail]);
 
-    useEffect(() => {
-        setIsPretty(false);
-        if (Scan.currentSelection.superDetail != undefined) {
-            if (Scan.currentSelection.superDetail.job_details != undefined) {
-                setDetailData(Scan.currentSelection.superDetail.job_details.split("\n\n"));
-            } else {
-                setDetailData(["invalid data"]);
-            }
+  const handleprettystate = (e) => {
+    const MockupJsonData = Scan.superDetail;
+    if (e.target.id === "prettytext" && !isPretty) {
+      setIsPretty(true);
+      if (MockupJsonData.job_details_pretty != undefined) {
+        setDetailData(MockupJsonData.job_details_pretty.split("\n\n"));
+      } else {
+        setDetailData(["กด เพื่อ Generate สำหรับ Pretty Text"]);
+      }
+      // setDetailData(MockupJsonData.job_details_pretty.split("\n\n"));
+    } else if (e.target.id === "rawtext" && isPretty) {
+      setIsPretty(false);
+      if (MockupJsonData.job_details != undefined) {
+        setDetailData(MockupJsonData.job_details.split("\n\n"));
+      } else {
+        setDetailData(["invalid data"]);
+      }
+    }
+  };
+
+  const handleGeneratePrettyJson = () => {
+    dispatch(setLoadingState({ loading: true, error: null }));
+    const id = Scan.id;
+    const url = `${config.APIURL}/api/jobscan/${id}`;
+    const method = "PATCH";
+
+    fetch(url, {
+      method: method,
+      // headers: {
+      //     'Content-Type': 'application/json',
+      // },
+      // body: JSON.stringify({ "job_details": Scan.superDetail.job_details })
+    })
+      .then((response) => {
+        if (!response.ok) {
+          dispatch(
+            setLoadingState({ loading: false, error: response.statusText })
+          );
+          throw new Error("Network response was not ok");
         }
-    }, [Scan.currentSelection.superDetail]);
-    
-    const handleprettystate = (e) => {
-        const MockupJsonData = Scan.currentSelection.superDetail;
-        if (e.target.id === "prettytext" && !isPretty) {
-            setIsPretty(true);
-            if (MockupJsonData.job_details_pretty != undefined) {
-                setDetailData(MockupJsonData.job_details_pretty.split("\n\n"));
-            } else {
-                setDetailData(["กด เพื่อ Generate สำหรับ Pretty Text"]);
-            }
-            // setDetailData(MockupJsonData.job_details_pretty.split("\n\n"));
-        } else if (e.target.id === "rawtext" && isPretty) {
-            setIsPretty(false);
-            if (MockupJsonData.job_details != undefined) {
-                setDetailData(MockupJsonData.job_details.split("\n\n"));
-            } else {
-                setDetailData(["invalid data"]);
-            }
-            
-        }
-    };
+        return response.json();
+      })
+      .then((data) => {
+        dispatch(
+          setCurrentSelection({
+            ...Scan,
+            superDetail: {
+              ...Scan.superDetail,
+              job_details_pretty: data.data,
+            },
+          })
+        );
+        dispatch(setLoadingState({ loading: false, error: null }));
+      })
+      .catch((error) => {
+        dispatch(setLoadingState({ loading: false, error: error.message }));
+        console.error(
+          "There has been a problem with your fetch operation:",
+          error
+        );
+      });
+  };
 
   return (
     <div
       className="px-2 bg-slate-600 w-3/5 overflow-auto sticky top-16 shadow"
       style={{ height: `calc(100vh - 64px)` }}
     >
-        <div className="bg-green-200 h-[60px] flex justify-center">
-            <div onClick={handleprettystate} id="rawtext" className={`bg-purple-300 w-full h-[60px]  flex items-center justify-center ` + (!isPretty ? "shadow-black shadow-inner" : "hover:cursor-pointer")}>
-                Raw Text
-            </div>
-            <div onClick={handleprettystate} id="prettytext" className={`bg-yellow-200 w-full h-[60px] flex items-center justify-center ` + (isPretty ? "shadow-black shadow-inner": "hover:cursor-pointer")}>
-                Pretty Text
-            </div>
+        
+      <div className="bg-green-200 h-[60px] flex justify-center">
+        <div
+          onClick={handleprettystate}
+          id="rawtext"
+          className={
+            `bg-purple-300 w-full h-[60px]  flex items-center justify-center ` +
+            (!isPretty ? "shadow-black shadow-inner" : "hover:cursor-pointer")
+          }
+        >
+          Raw Text
         </div>
-      <div className="bg-gray-800 text-gray-300 p-4" style={{ minHeight: `calc(100vh - 124px)` }}>
+        <div
+          onClick={handleprettystate}
+          id="prettytext"
+          className={
+            `bg-yellow-200 w-full h-[60px] flex items-center justify-center ` +
+            (isPretty ? "shadow-black shadow-inner" : "hover:cursor-pointer")
+          }
+        >
+          Pretty Text
+        </div>
+      </div>
+      <div
+        className="bg-gray-800 text-gray-300 p-4"
+        style={{ minHeight: `calc(100vh - 124px)` }}
+      >
+        {!LoadingState.loading ? <>
         <h2 className="text-xl font-bold mb-4">Job Details</h2>
+        {Scan.superDetail?.job_details_pretty == undefined &&
+        isPretty == true ? (
+          <button
+            onClick={() => handleGeneratePrettyJson()}
+            className="bg-slate-700 h-10 w-60 p-2 border-2 border-gray-300 hover:border-blue-400 hover:cursor-pointer focus:border-4 focus:border-blue-600"
+          >
+            Generate Pretty text with AI
+          </button>
+        ) : null}
         {detailData.map((paragraph, index) => (
           <p key={index} className="mb-4">
             {paragraph}
           </p>
         ))}
+        </> : <>
+        <div className="bg-gray-400 text-black h-20">Loading naja</div>
+        </>}
       </div>
     </div>
   );

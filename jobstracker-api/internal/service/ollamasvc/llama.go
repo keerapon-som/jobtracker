@@ -27,7 +27,7 @@ type llama3 struct {
 type Llama3 interface {
 	SetModel(model string)
 	SetSystem(suffix string)
-	Request(prompts string) string
+	Request(prompts string) (string, error)
 }
 
 func NewLlama3() Llama3 {
@@ -60,7 +60,7 @@ func (l *llama3) SetModel(model string) {
 func (l *llama3) SetSystem(suffix string) {
 	l.system = suffix
 }
-func (l *llama3) Request(prompts string) string {
+func (l *llama3) Request(prompts string) (string, error) {
 	// Define the API endpoint
 	config := config.GetConfig()
 	url := config.OllaMaServerPath + "/api/generate"
@@ -76,14 +76,14 @@ func (l *llama3) Request(prompts string) string {
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		fmt.Println("Error marshalling JSON:", err)
-		return ""
+		return "", err
 	}
 
 	// Create the HTTP request
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		fmt.Println("Error creating request:", err)
-		return ""
+		return "", err
 	}
 
 	// Set headers
@@ -94,13 +94,13 @@ func (l *llama3) Request(prompts string) string {
 	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Println("Error sending request:", err)
-		return ""
+		return "", err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		fmt.Println("Error response from server:", resp.Status)
-		return ""
+		return "", fmt.Errorf("error response from server: %s", resp.Status)
 	}
 
 	var allText string
@@ -109,7 +109,7 @@ func (l *llama3) Request(prompts string) string {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("Error reading response body:", err)
-		return ""
+		return "", err
 	}
 
 	// Print the raw response for debugging
@@ -134,5 +134,5 @@ func (l *llama3) Request(prompts string) string {
 		allText += line.Response // Access the Response field directly
 	}
 
-	return allText
+	return allText, nil
 }

@@ -44,6 +44,7 @@ const Joblists: React.FC = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
+
     const handleFetchJobScan = (abortController) => {
         // Abort the previous request if it exists
 
@@ -100,6 +101,7 @@ const Joblists: React.FC = () => {
                   data.data = {};
                 }
                 const CurrentSelectionUpdate = {...Scan.currentSelection, superDetail:data.data };
+                CurrentSelectionUpdate.id = newqueryData.jobid;
                 dispatch(setCurrentSelection(CurrentSelectionUpdate));
                 // dispatch(setTableData(data.data));
                 dispatch(setLoadingState({ loading: false, error: null }));

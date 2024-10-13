@@ -48,7 +48,7 @@ services:
       POSTGRESQL_CONNECTION_STRING: postgres://exampleuser:examplepassword@postgres:5432/jobtrackkerdb?sslmode=disable
       JOBS_WORKER_TRIGGER_TIME: 30
       PYTHONSERVERPATH: http://jobtracker-service:8000
-      OLLAMASERVERPATH: http://localhost:11434
+      OLLAMASERVERPATH: http://ollama:11434
       TZ: "Asia/Bangkok" # Set timezone to Thailand
 
   jobtracker-web:

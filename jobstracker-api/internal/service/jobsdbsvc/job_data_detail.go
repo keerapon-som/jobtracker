@@ -251,10 +251,15 @@ func (w jobHistoryDetailssvc) UpdateSuperDetailAsPrettyFormat(id int) (string, e
 	dataforupdate := make(map[string]interface{})
 	l := ollamasvc.NewLlama3()
 	l.SetModel("llama3:8b")
-	l.SetSystem("Please simplify the following text for better readability without adding any extra introduction or explanation.")
+	// l.SetSystem("Please simplify the following text for better readability without adding any extra introduction or explanation.")
+	// l.SetSystem("Please simplify the following text for better readability. Ensure that all original content is included, but formatted for clarity and ease of understanding without adding any extra introduction or explanation.")
+	l.SetSystem("You are a text formatting assistant. Your role is to help structure and format text to improve its readability. Follow these guidelines for formatting the text:")
 	dataforupdate["job_details"] = superDetail["job_details"]
 	prompts := superDetail["job_details"].(string)
-	prettyFormatData := l.Request(prompts)
+	prettyFormatData, err := l.Request(prompts)
+	if err != nil {
+		return "", err
+	}
 	dataforupdate["job_details_pretty"] = prettyFormatData
 
 	err = r.UpdateSuperDetailAsPrettyFormat(id, dataforupdate)

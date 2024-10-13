@@ -1,5 +1,7 @@
 import React from "react";
-
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import { useSearchParams } from "react-router-dom";
 type TableProps = {
   index: number;
   id: number;
@@ -27,11 +29,12 @@ type ShowingCardsProps = {
 };
 
 const Card: React.FC<ShowingCardsProps> = ({ Key, Data,handleSelectCard }) => {
-  
+  const scanid = useSelector((state: RootState) => state.scan.currentSelection.id);
+
   return (
-    <div id={Data.id.toString()} onClick={() => handleSelectCard(Data)}>
+    <div id={Data.id.toString()} onClick={() => handleSelectCard(Data)} className={`block max-h-[384px] min-h-[240px] p-6 rounded-lg shadow m-2 bg-gray-800 hover:cursor-pointer` + (scanid === Data.id ? " border-[7px] border-cyan-300 shadow-black shadow-inner" : "")}>
       <a
-        className="block max-h-[384px] min-h-[240px] p-6 border  rounded-lg shadow m-2 bg-gray-800 border-gray-700 hover:border-green-400 hover:border-[3px] focus:border-green-400 focus:border-[5px]"
+        
       >
         <h5 className="mb-2 text-xl font-semibold tracking-tight  text-green-400">
           {Data.title}
