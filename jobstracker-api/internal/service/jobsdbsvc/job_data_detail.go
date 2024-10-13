@@ -6,7 +6,9 @@ import (
 	"io"
 	"jobtrackker/internal/config"
 	"jobtrackker/internal/data" // Add this import statement
+	"jobtrackker/internal/data/db"
 	"jobtrackker/internal/repo"
+	"jobtrackker/internal/service/ollamasvc"
 	"log"
 	"net/http"
 	"strconv"
@@ -18,6 +20,9 @@ type IJobHistoryDetailssvc interface {
 	ScrapeToJobsDataDetails() error
 	UpdateJobsSuperDetail(detailsData map[string]map[string]interface{}) error
 	TrickerWorkerScrapeSuperDetail(scrapeLength int) error
+	GetListDataAndTotals(page int, pagesize int) ([]db.JobsDatadetailsDB, int, error)
+	GetSuperDetailByID(id int) (map[string]interface{}, error)
+	UpdateSuperDetailAsPrettyFormat(id int) (string, error)
 }
 
 func NewJobHistoryDetailssvc() IJobHistoryDetailssvc {
@@ -212,4 +217,44 @@ func (r jobHistoryDetailssvc) TrickerWorkerScrapeSuperDetail(scrapeLength int) e
 	}
 	fmt.Println(string(body))
 	return nil
+}
+
+func (w jobHistoryDetailssvc) GetListDataAndTotals(page int, pagesize int) ([]db.JobsDatadetailsDB, int, error) {
+	r := repo.NewJobsdbDetail()
+	jobs, totals, err := r.GetListDataAndTotals(page, pagesize)
+	if err != nil {
+		return nil, 0, err
+	}
+	return jobs, totals, nil
+}
+
+func (w jobHistoryDetailssvc) GetSuperDetailByID(id int) (map[string]interface{}, error) {
+	r := repo.NewJobsdbDetail()
+	superDetail, err := r.GetSuperDetailByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return superDetail, nil
+}
+
+func (w jobHistoryDetailssvc) UpdateSuperDetailAsPrettyFormat(id int) (string, error) {
+	r := repo.NewJobsdbDetail()
+	superDetail, err := r.GetSuperDetailByID(id)
+	if err != nil {
+		return "", err
+	}
+	dataforupdate := make(map[string]interface{})
+	l := ollamasvc.NewLlama3()
+	l.SetModel("llama3:8b")
+	l.SetSystem("Please simplify the following text for better readability without adding any extra introduction or explanation.")
+	dataforupdate["job_details"] = superDetail["job_details"]
+	prompts := superDetail["job_details"].(string)
+	prettyFormatData := l.Request(prompts)
+	dataforupdate["job_details_pretty"] = prettyFormatData
+
+	err = r.UpdateSuperDetailAsPrettyFormat(id, dataforupdate)
+	if err != nil {
+		return "", err
+	}
+	return prettyFormatData, nil
 }

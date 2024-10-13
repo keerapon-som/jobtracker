@@ -8,7 +8,6 @@ import (
 	"jobtrackker/internal/data/db"
 	"jobtrackker/internal/repo"
 	"jobtrackker/internal/service/jobsdbsvc"
-	"jobtrackker/internal/service/ollamasvc"
 	"time"
 
 	"github.com/gofiber/fiber/v2/log"
@@ -34,10 +33,6 @@ func TickerGetJobsSuperDetail() {
 }
 
 func TickerScheduler() {
-	l := ollamasvc.NewLlama3()
-	l.SetModel("llama3:8b")
-	l.SetSystem("Please simplify the following text for better readability without adding any extra introduction or explanation.")
-
 	var ScheduleTrigger []db.ScheduletaskRepo
 	cacheManager := jobschedulingcache.GetInstance()
 

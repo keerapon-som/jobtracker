@@ -16,6 +16,9 @@ type JobsdbDetail interface {
 	InsertOrUpdateJobs(jobs []data.JobsDatadetailsData) error
 	UpdateJobsSuperDetail(jobs []data.JobsDatadetailsData) error
 	SelectUpdateListSuperDetail(length int) ([]db.JobsDatadetailsDB, error)
+	GetListDataAndTotals(page int, pagesize int) ([]db.JobsDatadetailsDB, int, error)
+	GetSuperDetailByID(id int) (map[string]interface{}, error)
+	UpdateSuperDetailAsPrettyFormat(id int, data map[string]interface{}) error
 	// GetListSchedule()
 }
 
@@ -191,4 +194,132 @@ func (r jobsdbDetail) SelectUpdateListSuperDetail(length int) ([]db.JobsDatadeta
 	}
 
 	return jobs, nil
+}
+
+func (r jobsdbDetail) GetListDataAndTotals(page int, pagesize int) ([]db.JobsDatadetailsDB, int, error) {
+	query := `
+		SELECT id, advertiser_id, advertiser_name, area, area_id, area_where_value, country_code, listing_date, role_id, title, salary, teaser, work_type, latest_update
+		FROM public.jobsdatadetails
+		WHERE superdetail ? 'job_details'
+		ORDER BY id
+		LIMIT $1 OFFSET $2
+	`
+
+	dbpg := postgresqldb.NewRepo().DB()
+	if dbpg == nil {
+		log.Println("db is nil")
+		return nil, 0, errors.New("error init db")
+	}
+
+	rows, err := dbpg.Query(query, pagesize, (page-1)*pagesize)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	jobs := []db.JobsDatadetailsDB{}
+	for rows.Next() {
+		job := db.JobsDatadetailsDB{}
+		var superDetailJSON sql.NullString
+
+		err := rows.Scan(
+			&job.Id,
+			&job.AdvertiserID,
+			&job.AdvertiserName,
+			&job.Area,
+			&job.AreaID,
+			&job.AreaWhereValue,
+			&job.CountryCode,
+			&job.ListingDate,
+			&job.RoleID,
+			&job.Title,
+			&job.Salary,
+			&job.Teaser,
+			&job.WorkType,
+			&job.LatestUpdate,
+		)
+		if err != nil {
+			return nil, 0, err
+		}
+
+		if superDetailJSON.Valid {
+			err = json.Unmarshal([]byte(superDetailJSON.String), &job.SuperDetail)
+			if err != nil {
+				return nil, 0, err
+			}
+		} else {
+			job.SuperDetail = nil
+		}
+
+		jobs = append(jobs, job)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, 0, err
+	}
+
+	totalRows := 0
+	err = dbpg.QueryRow("SELECT COUNT(*) FROM public.jobsdatadetails").Scan(&totalRows)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return jobs, totalRows, nil
+}
+
+func (r jobsdbDetail) GetSuperDetailByID(id int) (map[string]interface{}, error) {
+	query := `
+		SELECT superdetail
+		FROM public.jobsdatadetails
+		WHERE id = $1
+	`
+
+	dbpg := postgresqldb.NewRepo().DB()
+	if dbpg == nil {
+		log.Println("db is nil")
+		return nil, errors.New("error init db")
+	}
+
+	var superDetailJSON sql.NullString
+	err := dbpg.QueryRow(query, id).Scan(&superDetailJSON)
+	if err != nil {
+		return nil, err
+	}
+
+	if superDetailJSON.Valid {
+		superDetail := map[string]interface{}{}
+		err = json.Unmarshal([]byte(superDetailJSON.String), &superDetail)
+		if err != nil {
+			return nil, err
+		}
+		return superDetail, nil
+	}
+
+	return nil, nil
+}
+
+func (r jobsdbDetail) UpdateSuperDetailAsPrettyFormat(id int, data map[string]interface{}) error {
+	query := `
+		UPDATE public.jobsdatadetails
+		SET superdetail = $1
+		WHERE id = $2
+	`
+
+	db := postgresqldb.NewRepo().DB()
+	if db == nil {
+		log.Println("db is nil")
+		return errors.New("error init db")
+	}
+
+	superDetailJSON, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec(query, superDetailJSON, id)
+	if err != nil {
+		log.Println("error in update super detail ", err)
+		return err
+	}
+
+	return nil
 }
