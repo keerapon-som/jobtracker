@@ -27,7 +27,24 @@ services:
   #   ports:
   #     - "6379:6379"
   #   volumes:
-  #     - redis_data:/data
+  #     - ./redisvolumes:/data
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management  # This version includes the management plugin
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"   # RabbitMQ default port for application communication
+      - "15672:15672" # RabbitMQ Management UI port
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - ./rabbitmq_data:/var/lib/rabbitmq
 
   jobtracker-api:
     # image: go-api-jobtrackker:latest # Use the existing image if available
@@ -96,4 +113,5 @@ services:
 volumes:
   postgres_data:
   ollama:
-  # redis_data:
+  rabbitmq:
+  # redis:

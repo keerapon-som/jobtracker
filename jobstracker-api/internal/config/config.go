@@ -17,6 +17,7 @@ var config *Config
 
 type Config struct {
 	PostgreSQL            PostgreSQL
+	RabbitMQ              RabbitMQ
 	ServerMode            string
 	IsDebug               bool
 	LogLevel              slog.Level
@@ -25,6 +26,10 @@ type Config struct {
 	JobsUrls              string
 	PythonServerPath      string
 	OllaMaServerPath      string
+}
+
+type RabbitMQ struct {
+	URL string
 }
 
 type PostgreSQL struct {
@@ -78,6 +83,9 @@ func doInit() {
 		LogLevel:   getEnvLogLevel("LOG_LEVEL", slog.LevelInfo),
 		PostgreSQL: PostgreSQL{
 			ConnectionString: getEnvString("POSTGRESQL_CONNECTION_STRING", ""),
+		},
+		RabbitMQ: RabbitMQ{
+			URL: getEnvString("RABBITMQ_URL", ""),
 		},
 		JobsWorkerTriggerTime: getEnvInt("JOBS_WORKER_TRIGGER_TIME", 30),
 		ItemsPerPage:          getEnvInt("ItemsPerPage", 50),

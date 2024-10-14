@@ -36,7 +36,6 @@ func Init(connStr string) {
 	}
 
 	log.Println("Successfully connected to PostgreSQL!")
-
 }
 
 func (r postgresRepo) DB() *sql.DB {

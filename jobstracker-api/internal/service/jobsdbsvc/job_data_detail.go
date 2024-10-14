@@ -182,6 +182,10 @@ func (r jobHistoryDetailssvc) TrickerWorkerScrapeSuperDetail(scrapeLength int) e
 	if err != nil {
 		log.Printf("error in get all, %v", err)
 	}
+	if (len(data)) == 0 {
+		log.Println("No data to scrape")
+		return nil
+	}
 
 	var ListId []string
 	for _, v := range data {
