@@ -5,7 +5,6 @@ import (
 	"jobtrackker/internal/config"
 	"jobtrackker/internal/repo"
 	"jobtrackker/internal/utils/postgresqldb"
-	"jobtrackker/internal/utils/rabbitmq"
 	"jobtrackker/internal/worker"
 )
 
@@ -16,10 +15,9 @@ func main() {
 		// mongodb.Uninit()
 		// redisdb.Uninit()
 		postgresqldb.Close()
-		rabbitmq.Close()
+		// worker.CloseZeebe()
 	}()
 	postgresqldb.Init(config.PostgreSQL.ConnectionString)
-	rabbitmq.Init(config.RabbitMQ.URL)
 	repo := repo.NewDataRepo()
 	err := repo.CreateAllTable()
 	if err != nil {
