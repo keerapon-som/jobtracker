@@ -5,6 +5,7 @@ import (
 	// Add this import statement
 
 	"jobtrackker/internal/cache/jobschedulingcache"
+	"jobtrackker/internal/config"
 	"jobtrackker/internal/data/db"
 	"jobtrackker/internal/repo"
 	"jobtrackker/internal/service/jobsdbsvc"
@@ -35,6 +36,7 @@ func TickerGetJobsSuperDetail() {
 func TickerScheduler() {
 	var ScheduleTrigger []db.ScheduletaskRepo
 	cacheManager := jobschedulingcache.GetInstance()
+	config := config.GetConfig()
 
 	ticker := time.NewTicker(1 * time.Minute)
 	defer ticker.Stop()
@@ -49,7 +51,8 @@ func TickerScheduler() {
 		ScheduleTrigger = cacheManager.GetScheduleTaskCache()
 		// log.Debug("ScheduleTrigger: ", ScheduleTrigger)
 		// do every five minute
-		if now.Minute()%5 == 0 {
+		triggerScrapeSuperDetailEveryMinute := config.ScrapeSuperDetailEvery
+		if now.Minute()%triggerScrapeSuperDetailEveryMinute == 0 {
 			go TickerGetJobsSuperDetail() // scrape job details every 1 minutes
 			log.Debug("Triggering task: TickerGetJobsSuperDetail")
 		}

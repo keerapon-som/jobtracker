@@ -16,16 +16,17 @@ import (
 var config *Config
 
 type Config struct {
-	PostgreSQL            PostgreSQL
-	RabbitMQ              RabbitMQ
-	ServerMode            string
-	IsDebug               bool
-	LogLevel              slog.Level
-	JobsWorkerTriggerTime int
-	ItemsPerPage          int
-	JobsUrls              string
-	PythonServerPath      string
-	OllaMaServerPath      string
+	PostgreSQL             PostgreSQL
+	RabbitMQ               RabbitMQ
+	ServerMode             string
+	IsDebug                bool
+	LogLevel               slog.Level
+	JobsWorkerTriggerTime  int
+	ScrapeSuperDetailEvery int
+	ItemsPerPage           int
+	JobsUrls               string
+	PythonServerPath       string
+	OllaMaServerPath       string
 }
 
 type RabbitMQ struct {
@@ -87,11 +88,12 @@ func doInit() {
 		RabbitMQ: RabbitMQ{
 			URL: getEnvString("RABBITMQ_URL", ""),
 		},
-		JobsWorkerTriggerTime: getEnvInt("JOBS_WORKER_TRIGGER_TIME", 30),
-		ItemsPerPage:          getEnvInt("ItemsPerPage", 50),
-		JobsUrls:              getEnvString("JOBSURL", ""),
-		PythonServerPath:      getEnvString("PYTHONSERVERPATH", ""),
-		OllaMaServerPath:      getEnvString("OLLAMASERVERPATH", "http://localhost:11434/"),
+		JobsWorkerTriggerTime:  getEnvInt("JOBS_WORKER_TRIGGER_TIME", 30),
+		ScrapeSuperDetailEvery: getEnvInt("SCRAPE_SUPERDETAIL_EVERY", 30),
+		ItemsPerPage:           getEnvInt("ItemsPerPage", 50),
+		JobsUrls:               getEnvString("JOBSURL", ""),
+		PythonServerPath:       getEnvString("PYTHONSERVERPATH", ""),
+		OllaMaServerPath:       getEnvString("OLLAMASERVERPATH", "http://localhost:11434/"),
 	}
 }
 
