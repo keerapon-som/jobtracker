@@ -4,6 +4,7 @@ import (
 
 	// Add this import statement
 
+	"fmt"
 	"jobtrackker/internal/cache/jobschedulingcache"
 	"jobtrackker/internal/config"
 	"jobtrackker/internal/data/db"
@@ -60,6 +61,7 @@ func TickerScheduler() {
 		if len(ScheduleTrigger) == 0 {
 			r := repo.NewScheduletaskRepo()
 			ScheduleTrigger, err := r.GetListSchedule()
+			fmt.Println(ScheduleTrigger)
 			log.Debug("Get schedule data from DB: ")
 			if err != nil {
 				log.Error("Error in getting schedule data from DB: ", err)
@@ -106,7 +108,7 @@ func convertToWeekdays(day string) string {
 	case "Monday":
 		day = "Mon"
 	case "Tuesday":
-		day = "Tues"
+		day = "Tue"
 	case "Wednesday":
 		day = "Wed"
 	case "Thursday":

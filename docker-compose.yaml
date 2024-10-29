@@ -80,12 +80,13 @@ services:
   ollama:
     image: ollama/ollama:0.4.0-rc3
     container_name: ollama
-    runtime: nvidia
+    # runtime: nvidia
     deploy:
       resources:
         reservations:
           devices:
-            - capabilities: [gpu]
+            # - capabilities: [gpu]
+            - capabilities: [cpu]
     volumes:
       - ./ollama/volumes:/root/.ollama
     ports:
